@@ -45,13 +45,11 @@ class AutonomousScreenAgent(
     suspend fun openAppViaDrawer(appName: String): Boolean {
         Log.d(TAG, "Navigating to home screen first page to open app drawer for: $appName")
 
-        // 1. Double tap HOME to ensure we are on the main default home page (Page 1)
         executor.execute(ActionCommand.SystemNav(SystemAction.HOME))
         delay(600L)
         executor.execute(ActionCommand.SystemNav(SystemAction.HOME))
         delay(800L)
 
-        // 2. Perform upward swipe gesture from bottom-center to open the App Drawer
         val dm = Resources.getSystem().displayMetrics
         val width = dm.widthPixels.toFloat()
         val height = dm.heightPixels.toFloat()
@@ -60,7 +58,6 @@ class AutonomousScreenAgent(
         performSwipeGesture(width / 2f, height * 0.85f, width / 2f, height * 0.25f, 300)
         delay(1000L)
 
-        // 3. Search and click matching app
         typeIntoInputField(
             appName,
             listOf("Search apps", "Search", "Search your phone", "App search")
@@ -78,6 +75,62 @@ class AutonomousScreenAgent(
         val directRes = executor.execute(ActionCommand.OpenApp(appName))
         delay(1500L)
         return directRes.success
+    }
+
+    /**
+     * Perceptive WhatsApp Chat Opener:
+     * Robustly searches and opens a specific conversation thread on WhatsApp.
+     */
+    suspend fun openWhatsAppChat(contactName: String): Boolean {
+        Log.d(TAG, "Opening WhatsApp chat for contact: '$contactName'")
+
+        // 1. First check if the contact is already visible in the active chat list
+        val immediatelyVisible = clickSemanticTarget(listOf(contactName), waitTimeoutMs = 1200L)
+        if (immediatelyVisible) {
+            Log.d(TAG, "Contact was immediately visible in active chat list")
+            delay(1200L)
+            return true
+        }
+
+        // 2. Locate and tap Search
+        // In modern WhatsApp: Top search bar or search icon ("Ask Meta AI or search", "Search", or search icon)
+        val clickedSearch = clickSemanticTarget(
+            listOf("Search", "Ask Meta AI or search", "Search…", "search"),
+            waitTimeoutMs = 2000L
+        )
+
+        if (!clickedSearch) {
+            // Tap top-right area where WhatsApp search icon sits
+            val dm = Resources.getSystem().displayMetrics
+            executor.execute(ActionCommand.TapCoordinate(dm.widthPixels * 0.72f, dm.heightPixels * 0.08f))
+            delay(600L)
+        } else {
+            delay(600L)
+        }
+
+        // 3. Type the exact contact name into the search field
+        typeIntoInputField(contactName, listOf("Search", "Search…", "Type a name"))
+        delay(1200L)
+
+        // 4. Select the matching conversation from the search results
+        // Matches exact contact name, or "Chats" search result section item
+        val clickedContact = clickSemanticTarget(
+            listOf(contactName),
+            waitTimeoutMs = 3000L
+        )
+
+        if (clickedContact) {
+            Log.d(TAG, "Successfully opened chat for $contactName from search results")
+            delay(1500L)
+            return true
+        }
+
+        // 5. Fallback: In WhatsApp search results, the first matching chat row sits below the search header (~22% height)
+        val dm = Resources.getSystem().displayMetrics
+        Log.d(TAG, "Tapping first search result coordinate fallback")
+        executor.execute(ActionCommand.TapCoordinate(dm.widthPixels * 0.45f, dm.heightPixels * 0.22f))
+        delay(1500L)
+        return true
     }
 
     /**

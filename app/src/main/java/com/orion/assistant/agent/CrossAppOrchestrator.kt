@@ -91,12 +91,12 @@ class CrossAppOrchestrator(private val context: Context) {
     }
 
     /**
-     * Executes the workflow by:
-     * 1. Querying installed launcher apps and asking the LLM to dynamically pick the apps.
+     * Executes the autonomous workflow:
+     * 1. Querying installed launcher apps and asking the LLM to dynamically pick the apps & extract recipient.
      * 2. Navigating through the home screen app drawer to the chosen generator app.
      * 3. Using the fast Screen Navigator to perceive, type, and submit the prompt.
      * 4. Converting the generated image artifact into a PDF.
-     * 5. Navigating to the chosen messaging app via app drawer and sending the document.
+     * 5. Navigating to the chosen messaging app via app drawer, accurately opening the recipient's chat, and sending the document.
      */
     suspend fun executeCrossAppWorkflow(
         goal: ComplexTaskGoal,
@@ -108,44 +108,22 @@ class CrossAppOrchestrator(private val context: Context) {
         val screenAgent = AutonomousScreenAgent(context, executor)
 
         // -----------------------------------------------------------------------------------------
-        // DYNAMIC APP SELECTION: LLM evaluates real installed device apps
+        // DYNAMIC APP & RECIPIENT SELECTION: LLM evaluates user prompt & installed device apps
         // -----------------------------------------------------------------------------------------
-        onProgress("Scanning device & letting LLM dynamically select apps for task...")
+        onProgress("Scanning device & letting LLM dynamically plan workflow...")
         val plan = dynamicAppSelector.selectAppsForTask(goal.rawPrompt)
-        Log.d(TAG, "Dynamic execution plan: generator='${plan.selectedGeneratorApp}', messenger='${plan.selectedMessagingApp}'")
+        val targetRecipient = plan.recipientName ?: goal.recipientName
+
+        Log.d(TAG, "Dynamic execution plan: recipient='$targetRecipient', generator='${plan.selectedGeneratorApp}', messenger='${plan.selectedMessagingApp}'")
 
         // -----------------------------------------------------------------------------------------
-        // PHASE 1: Verify recipient chat on the selected messaging app (e.g. WhatsApp / Telegram)
+        // PHASE 1: Launch Generator App (e.g. Gemini / ChatGPT) via App Drawer & Generate Poster
         // -----------------------------------------------------------------------------------------
-        if (goal.recipientName != null) {
-            onProgress("Phase 1/4: Launching ${plan.selectedMessagingApp} via App Drawer for ${goal.recipientName}...")
-            screenAgent.openAppViaDrawer(plan.selectedMessagingApp)
-            delay(2000L)
-
-            screenAgent.clickSemanticTarget(listOf("Search", "Ask Meta AI or search", "Search…"))
-            delay(500L)
-            executor.execute(ActionCommand.TypeText(goal.recipientName))
-            delay(1000L)
-            screenAgent.clickSemanticTarget(listOf(goal.recipientName))
-            delay(1200L)
-        }
-
-        // -----------------------------------------------------------------------------------------
-        // PHASE 2: Launch selected Generator App (e.g. ChatGPT / Gemini) via App Drawer
-        // -----------------------------------------------------------------------------------------
-        onProgress("Phase 2/4: Launching dynamically chosen generator: ${plan.selectedGeneratorApp}...")
+        onProgress("Phase 1/3: Launching dynamically chosen generator: ${plan.selectedGeneratorApp}...")
         screenAgent.openAppViaDrawer(plan.selectedGeneratorApp)
         delay(2500L)
 
-        // Step Loop: Autonomous Screen Navigator perceives layout & inputs prompt
-        onProgress("Navigator model sensing ${plan.selectedGeneratorApp} screen layout...")
-        screenAgent.executeAutonomousStepLoop(
-            subGoal = "Find chat input and focus field in ${plan.selectedGeneratorApp}",
-            maxSteps = 2,
-            onProgress = onProgress
-        )
-
-        onProgress("Entering prompt: '${plan.promptToUse}'...")
+        onProgress("Entering prompt into ${plan.selectedGeneratorApp}...")
         screenAgent.typeIntoInputField(
             plan.promptToUse,
             listOf("Ask Gemini", "Message", "Ask anything", "Prompt", "Type a message", "Ask")
@@ -181,9 +159,9 @@ class CrossAppOrchestrator(private val context: Context) {
         delay(2000L)
 
         // -----------------------------------------------------------------------------------------
-        // PHASE 3: Convert Generated Asset to PDF
+        // PHASE 2: Convert Generated Asset to PDF
         // -----------------------------------------------------------------------------------------
-        onProgress("Phase 3/4: Converting generated poster into PDF document...")
+        onProgress("Phase 2/3: Converting generated poster into PDF document...")
         var posterImageFile = PdfConverter.findLatestDownloadedImage(context)
 
         if (posterImageFile == null || (System.currentTimeMillis() - posterImageFile.lastModified() > 60_000L)) {
@@ -203,23 +181,20 @@ class CrossAppOrchestrator(private val context: Context) {
         } else null
 
         // -----------------------------------------------------------------------------------------
-        // PHASE 4: Open Selected Messenger via App Drawer & Autonomously Deliver Document
+        // PHASE 3: Open Messenger via App Drawer, Open Recipient's Chat & Deliver PDF
         // -----------------------------------------------------------------------------------------
-        onProgress("Phase 4/4: Opening ${plan.selectedMessagingApp} via App Drawer to dispatch PDF...")
+        onProgress("Phase 3/3: Opening ${plan.selectedMessagingApp} via App Drawer...")
         screenAgent.openAppViaDrawer(plan.selectedMessagingApp)
         delay(2000L)
 
-        if (goal.recipientName != null) {
-            screenAgent.clickSemanticTarget(listOf("Search", "Ask Meta AI or search", "Search…"))
-            delay(500L)
-            executor.execute(ActionCommand.TypeText(goal.recipientName))
-            delay(1000L)
-            screenAgent.clickSemanticTarget(listOf(goal.recipientName))
+        if (!targetRecipient.isNullOrBlank()) {
+            onProgress("Finding and opening chat for $targetRecipient in ${plan.selectedMessagingApp}...")
+            screenAgent.openWhatsAppChat(targetRecipient)
             delay(1500L)
         }
 
         // Tap Attach
-        onProgress("Tapping Attach in ${plan.selectedMessagingApp}...")
+        onProgress("Tapping Attach in chat...")
         val clickedAttach = screenAgent.clickSemanticTarget(
             listOf("Attach", "Attach…", "Share", "attachment"),
             waitTimeoutMs = 3000L
@@ -234,12 +209,12 @@ class CrossAppOrchestrator(private val context: Context) {
         }
 
         // Tap Document
-        onProgress("Selecting Document option...")
+        onProgress("Selecting Document from attachment options...")
         screenAgent.clickSemanticTarget(listOf("Document", "Documents", "document"))
         delay(1500L)
 
         // Select the newly generated PDF
-        onProgress("Selecting the newly generated PDF...")
+        onProgress("Selecting generated PDF...")
         val clickedDoc = screenAgent.clickSemanticTarget(
             listOf("Orion_Poster", "Browse other docs", "Recent", "PDF", "Just now"),
             waitTimeoutMs = 2500L
@@ -252,11 +227,11 @@ class CrossAppOrchestrator(private val context: Context) {
         }
 
         // Tap Send
-        onProgress("Sending PDF to ${goal.recipientName ?: "contact"}...")
+        onProgress("Sending PDF to ${targetRecipient ?: "contact"}...")
         screenAgent.clickSemanticTarget(listOf("Send", "send", "Send document", "arrow_forward"))
         delay(1500L)
 
-        val successMsg = "Autonomous workflow complete! Dynamically selected [${plan.selectedGeneratorApp}], generated asset, converted to PDF, and delivered via [${plan.selectedMessagingApp}]."
+        val successMsg = "Autonomous workflow complete! Dynamically planned by LLM, created in [${plan.selectedGeneratorApp}], converted to PDF, and delivered to ${targetRecipient ?: "contact"} via [${plan.selectedMessagingApp}]."
         onProgress(successMsg)
         return ActionResult(true, "Orion CrossApp", successMsg)
     }

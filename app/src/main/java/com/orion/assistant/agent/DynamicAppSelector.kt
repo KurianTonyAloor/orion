@@ -18,6 +18,7 @@ data class InstalledAppInfo(
 data class DynamicPlan(
     val selectedGeneratorApp: String,
     val selectedMessagingApp: String,
+    val recipientName: String?,
     val promptToUse: String,
     val format: String
 )
@@ -43,7 +44,6 @@ class DynamicAppSelector(private val context: Context) {
 
         for (resolve in resolveList) {
             val pkg = resolve.activityInfo.packageName
-            // Exclude orion itself from candidates
             if (pkg == context.packageName) continue
 
             val label = resolve.loadLabel(pm).toString()
@@ -55,7 +55,7 @@ class DynamicAppSelector(private val context: Context) {
 
     /**
      * Passes the entire user task and real installed apps list to the LLM
-     * so it dynamically selects which app to use for creation and delivery.
+     * so it dynamically extracts the recipient name and selects which apps to use.
      */
     suspend fun selectAppsForTask(
         userTask: String,
@@ -65,16 +65,21 @@ class DynamicAppSelector(private val context: Context) {
 
         val systemPrompt = """
             You are Orion AI planner running on Android.
-            Given the user task and the list of available apps on the phone, choose the best app to create/generate the requested asset, and the best app to send it to the contact.
+            Given the user task and the list of available apps on the phone:
+            1. Extract the recipient contact name if mentioned (e.g., "Sreehari", "Mom", "John").
+            2. Choose the best app to create/generate the requested asset.
+            3. Choose the best app to deliver/send the result.
+            4. Formulate an optimized generation prompt.
 
             Installed Apps on device:
             ${appNames.joinToString(", ")}
 
             Respond ONLY with a JSON object:
             {
-              "generator_app": "<App name from list, e.g. Gemini, ChatGPT, Canva, Chrome>",
+              "recipient_name": "<exact contact name or null>",
+              "generator_app": "<App name from list, e.g. Gemini, ChatGPT, Canva>",
               "messaging_app": "<App name from list, e.g. WhatsApp, Telegram, Messages>",
-              "creation_prompt": "<Optimized prompt for the generator app>",
+              "creation_prompt": "<Optimized prompt for generator>",
               "format": "pdf" or "image"
             }
         """.trimIndent()
@@ -92,8 +97,9 @@ class DynamicAppSelector(private val context: Context) {
             val msgApp = json.optString("messaging_app", "").trim()
             val prompt = json.optString("creation_prompt", "").trim()
             val fmt = json.optString("format", "pdf").trim()
+            val rawRecipient = json.optString("recipient_name", "").trim()
+            val recipient = if (rawRecipient.isNotBlank() && rawRecipient != "null") rawRecipient else null
 
-            // Verify the selected generator app is installed
             val resolvedGen = candidateApps.find { it.appName.equals(genApp, ignoreCase = true) }?.appName
                 ?: candidateApps.find { it.appName.contains("Gemini", ignoreCase = true) || it.appName.contains("ChatGPT", ignoreCase = true) }?.appName
                 ?: genApp.ifBlank { "Gemini" }
@@ -102,16 +108,17 @@ class DynamicAppSelector(private val context: Context) {
                 ?: candidateApps.find { it.appName.contains("WhatsApp", ignoreCase = true) }?.appName
                 ?: msgApp.ifBlank { "WhatsApp" }
 
-            Log.d(TAG, "LLM dynamically selected: generator=$resolvedGen, messenger=$resolvedMsg")
+            Log.d(TAG, "LLM plan: recipient=$recipient, generator=$resolvedGen, messenger=$resolvedMsg")
             return DynamicPlan(
                 selectedGeneratorApp = resolvedGen,
                 selectedMessagingApp = resolvedMsg,
+                recipientName = recipient,
                 promptToUse = prompt.ifBlank { "Generate a festive celebration poster, high resolution" },
                 format = fmt.ifBlank { "pdf" }
             )
         }
 
-        // Heuristic fallback if local model is offline/unloaded
+        // Heuristic fallback
         val fallbackGen = candidateApps.find { it.appName.contains("ChatGPT", ignoreCase = true) }?.appName
             ?: candidateApps.find { it.appName.contains("Gemini", ignoreCase = true) }?.appName
             ?: "Gemini"
@@ -122,6 +129,7 @@ class DynamicAppSelector(private val context: Context) {
         return DynamicPlan(
             selectedGeneratorApp = fallbackGen,
             selectedMessagingApp = fallbackMsg,
+            recipientName = null,
             promptToUse = "Generate a vibrant festive celebration poster with traditional art",
             format = "pdf"
         )
