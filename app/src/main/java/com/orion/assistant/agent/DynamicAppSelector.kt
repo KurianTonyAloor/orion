@@ -9,7 +9,7 @@ import com.orion.assistant.llm.LlamaCppRuntime
 import com.orion.assistant.llm.ModelRole
 import org.json.JSONObject
 
-data class DiscoveredApp(
+data class InstalledAppInfo(
     val appName: String,
     val packageName: String,
     val description: String = ""
@@ -34,12 +34,12 @@ class DynamicAppSelector(private val context: Context) {
     /**
      * Queries Android's PackageManager for user-launchable apps on the device.
      */
-    fun getInstalledLauncherApps(): List<DiscoveredApp> {
+    fun getInstalledLauncherApps(): List<InstalledAppInfo> {
         val intent = Intent(Intent.ACTION_MAIN, null).apply {
             addCategory(Intent.CATEGORY_LAUNCHER)
         }
         val resolveList: List<ResolveInfo> = pm.queryIntentActivities(intent, 0)
-        val appList = mutableListOf<DiscoveredApp>()
+        val appList = mutableListOf<InstalledAppInfo>()
 
         for (resolve in resolveList) {
             val pkg = resolve.activityInfo.packageName
@@ -47,7 +47,7 @@ class DynamicAppSelector(private val context: Context) {
             if (pkg == context.packageName) continue
 
             val label = resolve.loadLabel(pm).toString()
-            appList.add(DiscoveredApp(appName = label, packageName = pkg))
+            appList.add(InstalledAppInfo(appName = label, packageName = pkg))
         }
 
         return appList.distinctBy { it.appName }
@@ -59,7 +59,7 @@ class DynamicAppSelector(private val context: Context) {
      */
     suspend fun selectAppsForTask(
         userTask: String,
-        candidateApps: List<DiscoveredApp> = getInstalledLauncherApps()
+        candidateApps: List<InstalledAppInfo> = getInstalledLauncherApps()
     ): DynamicPlan {
         val appNames = candidateApps.map { it.appName }
 
