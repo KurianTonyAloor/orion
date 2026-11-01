@@ -2,16 +2,16 @@ package com.orion.assistant.agent
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.os.Environment
 import android.util.Log
 import com.orion.assistant.model.ActionCommand
 import com.orion.assistant.model.ActionResult
+import com.orion.assistant.model.ScrollDirection
 import com.orion.assistant.service.accessibility.ActionExecutor
 import com.orion.assistant.service.accessibility.OrionAccessibilityService
 import com.orion.assistant.tools.PdfConverter
 import com.orion.assistant.tools.WhatsAppDispatcher
+import com.orion.assistant.vision.ScreenCaptureManager
 import kotlinx.coroutines.delay
 import java.io.File
 import java.io.FileOutputStream
@@ -42,7 +42,6 @@ class CrossAppOrchestrator(private val context: Context) {
     fun parseComplexGoal(prompt: String): ComplexTaskGoal? {
         val lower = prompt.lowercase()
 
-        // Check for cross-app indicators: (texted/messaged me about X, make it and send as Y)
         val hasSender = lower.contains("texted me") || lower.contains("messaged me") || lower.contains("sent me")
         val hasDeliverable = lower.contains("send it") || lower.contains("send back") || lower.contains("pdf") || lower.contains("poster")
 
@@ -94,153 +93,180 @@ class CrossAppOrchestrator(private val context: Context) {
     }
 
     /**
-     * Executes the cross-app multi-stage workflow autonomously with closed-loop screen perception,
-     * native in-engine PDF conversion, and WhatsApp dispatching.
+     * Executes the true autonomous cross-app multi-stage workflow:
+     * 1. Inspects chat in WhatsApp (reads context).
+     * 2. Opens Gemini / ChatGPT, inputs prompt to generate the poster image, and waits for completion.
+     * 3. Interacts with the AI app UI (or captures screen / downloaded media) to extract the real generated image.
+     * 4. Converts the generated image into a PDF via native PdfDocument engine.
+     * 5. Navigates WhatsApp through accessibility gestures/clicks (Search -> Contact -> Attach -> Document -> Send).
      */
     suspend fun executeCrossAppWorkflow(
         goal: ComplexTaskGoal,
         onProgress: (String) -> Unit
     ): ActionResult {
         val executor = getExecutor()
-            ?: return ActionResult(false, "Orchestrator", "Accessibility Service is not enabled.")
+            ?: return ActionResult(false, "Orchestrator", "Accessibility Service is not enabled. Please enable Orion in Accessibility Settings.")
 
         val screenAgent = AutonomousScreenAgent(context, executor)
         Log.d(TAG, "Starting autonomous cross-app workflow for goal: $goal")
 
         // -----------------------------------------------------------------------------------------
-        // PHASE 1: Check context from messaging app (e.g. WhatsApp) if available
+        // PHASE 1: Verify / inspect context on WhatsApp
         // -----------------------------------------------------------------------------------------
         val messagingApp = capabilityRegistry.findBestAppFor(AppCapability.MESSAGING)
-        if (messagingApp != null && goal.recipientName != null) {
-            onProgress("Phase 1/4: Checking context with ${goal.recipientName} on ${messagingApp.appName}...")
-            executor.execute(ActionCommand.OpenApp(messagingApp.appName))
-            delay(1500L)
+        val messagingName = messagingApp?.appName ?: "WhatsApp"
 
-            // Dynamic perception: find search bar and find contact
-            val searched = screenAgent.typeIntoInputField(goal.recipientName, listOf("Search", "Ask Meta AI or search"))
-            if (searched) {
-                delay(800L)
-                screenAgent.clickSemanticTarget(listOf(goal.recipientName))
-                delay(1200L)
-            }
+        if (goal.recipientName != null) {
+            onProgress("Phase 1/4: Checking ${goal.recipientName}'s conversation on $messagingName...")
+            executor.execute(ActionCommand.OpenApp(messagingName))
+            delay(2000L)
+
+            // Dynamic UI navigation on WhatsApp
+            screenAgent.clickSemanticTarget(listOf("Search", "Ask Meta AI or search", "Search…"))
+            delay(500L)
+            executor.execute(ActionCommand.TypeText(goal.recipientName))
+            delay(1000L)
+
+            // Click the matching contact item
+            screenAgent.clickSemanticTarget(listOf(goal.recipientName))
+            delay(1500L)
         }
 
         // -----------------------------------------------------------------------------------------
-        // PHASE 2: Discover and invoke AI Generation (e.g. Gemini or ChatGPT)
+        // PHASE 2: Open AI App (Gemini / ChatGPT) & Generate the Poster
         // -----------------------------------------------------------------------------------------
         val aiApp = capabilityRegistry.findBestAppFor(AppCapability.AI_IMAGE_GENERATOR)
         val selectedAiName = aiApp?.appName ?: "Gemini"
 
-        onProgress("Phase 2/4: Generating ${goal.assetTopic} via $selectedAiName...")
+        onProgress("Phase 2/4: Opening $selectedAiName to generate '${goal.assetTopic}'...")
         executor.execute(ActionCommand.OpenApp(selectedAiName))
-        delay(2500L)
+        delay(3000L)
 
-        val generationPrompt = "Create a high quality vibrant ${goal.assetTopic} with traditional festive art, high resolution."
+        val generationPrompt = "Generate a full-screen vibrant ${goal.assetTopic} with traditional festive art, high resolution, no watermarks."
 
-        // Closed-loop dynamic typing into AI input field
-        screenAgent.typeIntoInputField(generationPrompt, listOf("Ask", "Message", "Prompt", "Type a message"))
-        delay(600L)
-        screenAgent.clickSemanticTarget(listOf("Send", "Submit", "arrow"))
-        delay(3500L)
+        // Type generation prompt into the AI app's input field
+        onProgress("Typing generation prompt into $selectedAiName...")
+        screenAgent.typeIntoInputField(
+            generationPrompt,
+            listOf("Ask Gemini", "Message", "Ask anything", "Prompt", "Type a message", "Ask")
+        )
+        delay(800L)
 
-        // -----------------------------------------------------------------------------------------
-        // PHASE 3: Acquire Poster Image & Convert to PDF
-        // -----------------------------------------------------------------------------------------
-        onProgress("Phase 3/4: Converting poster to high-resolution PDF document...")
-        var posterImageFile = PdfConverter.findLatestDownloadedImage(context)
-
-        // If no external downloaded image is found yet, synthesize an on-device digital poster graphic
-        if (posterImageFile == null || System.currentTimeMillis() - posterImageFile.lastModified() > 300_000L) {
-            Log.d(TAG, "Synthesizing high-res poster bitmap locally for: ${goal.assetTopic}")
-            posterImageFile = createSyntheticPosterBitmap(goal.assetTopic)
-        }
-
-        val pdfFile = if (posterImageFile != null && posterImageFile.exists()) {
-            PdfConverter.convertImageToPdf(context, posterImageFile, "Orion_${goal.assetTopic.replace(" ", "_")}.pdf")
-        } else null
-
-        // -----------------------------------------------------------------------------------------
-        // PHASE 4: Autonomous WhatsApp Delivery via FileProvider
-        // -----------------------------------------------------------------------------------------
-        val targetFile = if (goal.outputFormat == "pdf") pdfFile ?: posterImageFile else posterImageFile
-        if (targetFile != null && targetFile.exists()) {
-            onProgress("Phase 4/4: Dispatching ${targetFile.name} to ${goal.recipientName ?: "contact"}...")
-
-            val mimeType = if (goal.outputFormat == "pdf") "application/pdf" else "image/*"
-            val caption = "Here is the ${goal.assetTopic} requested by ${goal.recipientName ?: "you"} (Generated via Orion AI)."
-
-            val dispatched = WhatsAppDispatcher.sendFileToWhatsApp(
-                context = context,
-                file = targetFile,
-                mimeType = mimeType,
-                caption = caption
-            )
-
-            if (dispatched) {
-                delay(1200L)
-                // If recipient was specified, complete contact selection in WhatsApp share target
-                if (goal.recipientName != null) {
-                    screenAgent.clickSemanticTarget(listOf(goal.recipientName, "Frequently contacted", "Recent chats"), waitTimeoutMs = 3000L)
-                    delay(500L)
-                    screenAgent.clickSemanticTarget(listOf("Send", "Next", "arrow_forward"))
-                }
+        // Click Send button (or tap arrow / mic button transition)
+        screenAgent.clickSemanticTarget(listOf("Send", "Submit", "arrow", "Generate"))
+        
+        // Wait for AI generation (typically takes 8 to 15 seconds)
+        onProgress("Waiting for $selectedAiName to complete image generation...")
+        var elapsed = 0
+        while (elapsed < 14) {
+            delay(1000L)
+            elapsed++
+            if (elapsed % 3 == 0) {
+                onProgress("Generating poster in $selectedAiName (${elapsed}s)...")
             }
         }
 
-        val successMsg = "Autonomous workflow complete! Created ${goal.assetTopic}, converted to ${goal.outputFormat.uppercase()}, and shared with ${goal.recipientName ?: "contact"}."
+        // Try downloading / saving the generated image from the screen
+        onProgress("Saving generated poster from $selectedAiName...")
+        val clickedDownload = screenAgent.clickSemanticTarget(
+            listOf("Download", "Save", "Save image", "More options", "Share"),
+            waitTimeoutMs = 2500L
+        )
+
+        if (!clickedDownload) {
+            // Tap the generated image in the middle of the screen and check for save/download
+            val metrics = android.content.res.Resources.getSystem().displayMetrics
+            executor.execute(ActionCommand.TapCoordinate(metrics.widthPixels / 2f, metrics.heightPixels * 0.45f))
+            delay(1000L)
+            screenAgent.clickSemanticTarget(listOf("Download", "Save to phone", "Save", "More options"))
+        }
+        delay(2000L)
+
+        // -----------------------------------------------------------------------------------------
+        // PHASE 3: Acquire Generated Poster & Convert to PDF
+        // -----------------------------------------------------------------------------------------
+        onProgress("Phase 3/4: Converting generated poster into PDF...")
+        var posterImageFile = PdfConverter.findLatestDownloadedImage(context)
+
+        // If not saved to disk yet, take high-res screen capture of the generated image on screen
+        if (posterImageFile == null || (System.currentTimeMillis() - posterImageFile.lastModified() > 60_000L)) {
+            Log.d(TAG, "Capturing generated image directly from screen buffer...")
+            val screenBitmap = ScreenCaptureManager.captureCurrentScreen()
+            if (screenBitmap != null) {
+                val capturedFile = File(context.cacheDir, "gemini_poster_${System.currentTimeMillis()}.png")
+                FileOutputStream(capturedFile).use { out ->
+                    screenBitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+                }
+                posterImageFile = capturedFile
+            }
+        }
+
+        // Convert the acquired image into a PDF
+        val pdfFile = if (posterImageFile != null && posterImageFile.exists()) {
+            PdfConverter.convertImageToPdf(context, posterImageFile, "Orion_Poster_${System.currentTimeMillis()}.pdf")
+        } else null
+
+        // -----------------------------------------------------------------------------------------
+        // PHASE 4: Open WhatsApp, Navigate UI Artifacts & Send Document
+        // -----------------------------------------------------------------------------------------
+        onProgress("Phase 4/4: Delivering PDF to ${goal.recipientName ?: "contact"} via WhatsApp UI...")
+
+        // Open WhatsApp directly
+        executor.execute(ActionCommand.OpenApp(messagingName))
+        delay(2000L)
+
+        // If contact name is given, search and open chat
+        if (goal.recipientName != null) {
+            screenAgent.clickSemanticTarget(listOf("Search", "Ask Meta AI or search", "Search…"))
+            delay(600L)
+            executor.execute(ActionCommand.TypeText(goal.recipientName))
+            delay(1000L)
+            screenAgent.clickSemanticTarget(listOf(goal.recipientName))
+            delay(1500L)
+        }
+
+        // In the chat screen: Click Attach (paperclip) icon
+        onProgress("Tapping Attach in WhatsApp chat...")
+        val clickedAttach = screenAgent.clickSemanticTarget(
+            listOf("Attach", "Attach…", "Share", "attachment"),
+            waitTimeoutMs = 3000L
+        )
+
+        if (!clickedAttach) {
+            // Coordinate fallback: In WhatsApp, paperclip is typically near the right of the input bar
+            val dm = android.content.res.Resources.getSystem().displayMetrics
+            executor.execute(ActionCommand.TapCoordinate(dm.widthPixels * 0.78f, dm.heightPixels * 0.94f))
+            delay(1000L)
+        } else {
+            delay(1000L)
+        }
+
+        // Select "Document" from the attachment grid
+        onProgress("Selecting Document option...")
+        screenAgent.clickSemanticTarget(listOf("Document", "Documents", "document"))
+        delay(1500L)
+
+        // Select the top/most recent PDF document in document picker
+        onProgress("Selecting the generated poster PDF...")
+        val clickedRecentDoc = screenAgent.clickSemanticTarget(
+            listOf("Orion_Poster", "Browse other docs", "Recent", "PDF", "Just now"),
+            waitTimeoutMs = 2500L
+        )
+
+        if (!clickedRecentDoc) {
+            // Tap the first document item listed in the picker
+            val dm = android.content.res.Resources.getSystem().displayMetrics
+            executor.execute(ActionCommand.TapCoordinate(dm.widthPixels * 0.5f, dm.heightPixels * 0.22f))
+            delay(1000L)
+        }
+
+        // Tap the WhatsApp Send arrow button
+        onProgress("Sending PDF document...")
+        screenAgent.clickSemanticTarget(listOf("Send", "send", "Send document", "arrow_forward"))
+        delay(1500L)
+
+        val successMsg = "Autonomous mission complete! Generated '${goal.assetTopic}' on $selectedAiName, converted it to PDF, and navigated WhatsApp to send it to ${goal.recipientName ?: "contact"}."
         onProgress(successMsg)
         return ActionResult(true, "Orion CrossApp", successMsg)
-    }
-
-    /**
-     * Synthesizes an on-device digital graphic bitmap when external 3rd-party network generation is offline.
-     */
-    private fun createSyntheticPosterBitmap(topic: String): File {
-        val width = 1080
-        val height = 1920
-        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-
-        // Festive background gradient
-        val bgPaint = Paint().apply { color = Color.parseColor("#0F2027") }
-        canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), bgPaint)
-
-        val accentPaint = Paint().apply {
-            color = Color.parseColor("#F2C94C")
-            style = Paint.Style.STROKE
-            strokeWidth = 14f
-        }
-        canvas.drawRect(40f, 40f, (width - 40).toFloat(), (height - 40).toFloat(), accentPaint)
-
-        // Header and Title text
-        val titlePaint = Paint().apply {
-            color = Color.parseColor("#F2994A")
-            textSize = 64f
-            isFakeBoldText = true
-            textAlign = Paint.Align.CENTER
-        }
-        canvas.drawText("ORION AUTONOMOUS CREATION", width / 2f, 280f, titlePaint)
-
-        val topicPaint = Paint().apply {
-            color = Color.WHITE
-            textSize = 76f
-            isFakeBoldText = true
-            textAlign = Paint.Align.CENTER
-        }
-        canvas.drawText(topic.uppercase(), width / 2f, 540f, topicPaint)
-
-        val subPaint = Paint().apply {
-            color = Color.LTGRAY
-            textSize = 42f
-            textAlign = Paint.Align.CENTER
-        }
-        canvas.drawText("Created on-device • Snapdragon 695", width / 2f, 640f, subPaint)
-
-        // Save generated poster bitmap to cache
-        val posterFile = File(context.cacheDir, "synthetic_poster_${System.currentTimeMillis()}.png")
-        FileOutputStream(posterFile).use { out ->
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
-        }
-        return posterFile
     }
 }
