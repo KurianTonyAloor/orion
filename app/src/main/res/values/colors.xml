@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#00E5FF</color>
+    <color name="primary_variant">#00B0FF</color>
+    <color name="background_dark">#0A0E17</color>
+    <color name="surface_dark">#131B2A</color>
+    <color name="text_primary">#E6EDF3</color>
+    <color name="call_accept">#00E676</color>
+    <color name="call_decline">#FF1744</color>
+</resources>
