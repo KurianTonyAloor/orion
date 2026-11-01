@@ -36,10 +36,9 @@ class AutonomousScreenAgent(
         while (System.currentTimeMillis() - startTime < timeoutMs) {
             val root = OrionAccessibilityService.currentInstance?.rootInActiveWindow
             if (root != null) {
-                val elements = ScreenSemanticParser.parse(root)
+                val (_, elements) = ScreenSemanticParser.parseActiveScreen(root)
                 val match = elements.find { el ->
-                    el.text.contains(matchingText, ignoreCase = true) ||
-                    el.contentDescription.contains(matchingText, ignoreCase = true)
+                    el.text.contains(matchingText, ignoreCase = true)
                 }
                 if (match != null) {
                     return match
@@ -61,16 +60,13 @@ class AutonomousScreenAgent(
         while (System.currentTimeMillis() - startTime < waitTimeoutMs) {
             val root = OrionAccessibilityService.currentInstance?.rootInActiveWindow
             if (root != null) {
-                val elements = ScreenSemanticParser.parse(root)
+                val (_, elements) = ScreenSemanticParser.parseActiveScreen(root)
                 for (label in candidateLabels) {
                     val match = elements.find { el ->
-                        el.isClickable && (
-                            el.text.contains(label, ignoreCase = true) ||
-                            el.contentDescription.contains(label, ignoreCase = true)
-                        )
+                        el.isClickable && el.text.contains(label, ignoreCase = true)
                     }
                     if (match != null) {
-                        Log.d(TAG, "Found target clickable element: ${match.text} / ${match.contentDescription} at index ${match.index}")
+                        Log.d(TAG, "Found target clickable element: ${match.text} at index ${match.index}")
                         val res = executor.execute(ActionCommand.Click(targetIndex = match.index))
                         if (res.success) return true
                     }
