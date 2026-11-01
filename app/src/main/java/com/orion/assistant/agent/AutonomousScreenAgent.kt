@@ -1,12 +1,16 @@
 package com.orion.assistant.agent
 
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Rect
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
+import com.orion.assistant.llm.LlamaCppRuntime
+import com.orion.assistant.llm.ModelDecision
 import com.orion.assistant.model.ActionCommand
 import com.orion.assistant.model.ActionResult
 import com.orion.assistant.model.ScrollDirection
+import com.orion.assistant.model.SystemAction
 import com.orion.assistant.service.accessibility.ActionExecutor
 import com.orion.assistant.service.accessibility.OrionAccessibilityService
 import com.orion.assistant.service.accessibility.ScreenSemanticParser
@@ -15,8 +19,9 @@ import kotlinx.coroutines.delay
 
 /**
  * AutonomousScreenAgent: Dynamic closed-loop perceptual UI navigation agent.
- * Senses the live screen hierarchy (Perceive), determines target element or coordinate (Think),
- * and executes clicks, gestures, swipes, or text entry (Act).
+ * 1. Homes the device to Page 1 and opens the app drawer.
+ * 2. Uses the on-device LLM to perceive the active screen, choose the exact click/swipe,
+ *    and achieve navigation goals autonomously.
  */
 class AutonomousScreenAgent(
     private val context: Context,
@@ -29,8 +34,113 @@ class AutonomousScreenAgent(
     private val service: OrionAccessibilityService?
         get() = OrionAccessibilityService.currentInstance
 
+    private val llamaRuntime = LlamaCppRuntime(context)
+
     /**
-     * Continuously senses the screen until a target element with the specified text or content description is visible.
+     * Navigates to the first page of the home screen, swipes up to open the app drawer,
+     * searches for the target app by name, and taps it to open.
+     */
+    suspend fun openAppViaDrawer(appName: String): Boolean {
+        Log.d(TAG, "Navigating to home screen first page to open app drawer for: $appName")
+
+        // 1. Double tap HOME to ensure we are on the main default home page (Page 1)
+        executor.execute(ActionCommand.SystemNav(SystemAction.HOME))
+        delay(600L)
+        executor.execute(ActionCommand.SystemNav(SystemAction.HOME))
+        delay(800L)
+
+        // 2. Perform upward swipe gesture from bottom-center to open the App Drawer
+        val dm = Resources.getSystem().displayMetrics
+        val width = dm.widthPixels.toFloat()
+        val height = dm.heightPixels.toFloat()
+
+        Log.d(TAG, "Swiping up from ($width/2, $height*0.85) to ($width/2, $height*0.25) for App Drawer")
+        val swiped = performSwipeGesture(width / 2f, height * 0.85f, width / 2f, height * 0.25f, 300)
+        delay(1000L)
+
+        // 3. Look for the app search bar or app drawer elements
+        val searched = typeIntoInputField(
+            appName,
+            listOf("Search apps", "Search", "Search your phone", "App search")
+        )
+
+        delay(800L)
+
+        // 4. Click the matching app in the search results
+        val clicked = clickSemanticTarget(listOf(appName), waitTimeoutMs = 2500L)
+        if (clicked) {
+            delay(1500L)
+            return true
+        }
+
+        // Fallback: If not found in search results immediately, try direct package/label launch
+        Log.d(TAG, "Drawer item not clicked directly, using Intent launcher fallback")
+        val directRes = executor.execute(ActionCommand.OpenApp(appName))
+        delay(1500L)
+        return directRes.success
+    }
+
+    /**
+     * Uses the local LLM to analyze the active screen hierarchy and execute the best next step
+     * toward completing the specified sub-task.
+     */
+    suspend fun stepIntelligently(
+        subGoal: String,
+        onProgress: ((String) -> Unit)? = null
+    ): ActionResult {
+        // 1. Gather screen elements
+        val screenDesc = executor.refreshScreenContext()
+        val systemPrompt = """
+            You are Orion navigating an Android screen.
+            Active screen hierarchy:
+            $screenDesc
+
+            Goal: $subGoal
+
+            Choose the exact next action to get closer to the goal.
+            Respond ONLY with a JSON action:
+            {"action": "click", "text": "<label>", "index": <optional_index>}
+            {"action": "type", "text": "<string>"}
+            {"action": "scroll", "direction": "up"|"down"|"left"|"right"}
+            {"action": "respond", "message": "<done_or_status>"}
+        """.trimIndent()
+
+        onProgress?.invoke("Analyzing screen layout for '$subGoal'...")
+        val decision = llamaRuntime.decideNextAction(systemPrompt, subGoal)
+        Log.d(TAG, "LLM dynamic navigation decision: action=${decision.actionName}, thought=${decision.thought}")
+
+        // 2. Execute decision
+        val json = decision.rawJson
+        return when (decision.actionName.lowercase()) {
+            "click" -> {
+                val index = json?.optInt("index", -1) ?: -1
+                val text = json?.optString("text", null)
+                val targetIndex = if (index >= 0) index else null
+                executor.execute(ActionCommand.Click(targetIndex = targetIndex, targetText = text))
+            }
+            "type" -> {
+                val text = json?.optString("text", "") ?: ""
+                typeIntoInputField(text)
+                ActionResult(true, "Type", "Typed $text")
+            }
+            "scroll" -> {
+                val dir = when (json?.optString("direction")?.lowercase()) {
+                    "up" -> ScrollDirection.UP
+                    "left" -> ScrollDirection.LEFT
+                    "right" -> ScrollDirection.RIGHT
+                    else -> ScrollDirection.DOWN
+                }
+                scroll(dir)
+                ActionResult(true, "Scroll", "Scrolled $dir")
+            }
+            else -> {
+                ActionResult(true, "Step", decision.directMessage ?: "Analyzed screen.")
+            }
+        }
+    }
+
+    /**
+     * Continuously senses the screen until a target element with the specified text is visible.
      */
     suspend fun waitForElement(
         matchingText: String,
@@ -72,11 +182,9 @@ class AutonomousScreenAgent(
                     }
                     if (match != null) {
                         Log.d(TAG, "Found target element '${match.text}' (clickable=${match.isClickable}) at index ${match.index} (${match.centerX}, ${match.centerY})")
-                        // If marked clickable, try accessibility click first
                         val res = executor.execute(ActionCommand.Click(targetIndex = match.index))
                         if (res.success) return true
 
-                        // Direct physical tap fallback
                         val tapRes = executor.execute(ActionCommand.TapCoordinate(match.centerX, match.centerY))
                         if (tapRes.success) return true
                     }
@@ -85,34 +193,9 @@ class AutonomousScreenAgent(
             delay(350L)
         }
 
-        // Secondary fallback: Try click by text
         for (label in candidateLabels) {
             val res = executor.execute(ActionCommand.Click(targetText = label))
             if (res.success) return true
-        }
-        return false
-    }
-
-    /**
-     * Finds and clicks an element based on class or role (e.g. an ImageView, Download button, or share icon).
-     */
-    suspend fun clickFirstMatching(
-        predicate: (SemanticElement) -> Boolean,
-        waitTimeoutMs: Long = 3000L
-    ): Boolean {
-        val startTime = System.currentTimeMillis()
-        while (System.currentTimeMillis() - startTime < waitTimeoutMs) {
-            val root = service?.rootInActiveWindow
-            if (root != null) {
-                val (_, elements) = ScreenSemanticParser.parseActiveScreen(root)
-                val match = elements.firstOrNull(predicate)
-                if (match != null) {
-                    Log.d(TAG, "Matching element found: ${match.type} '${match.text}' at (${match.centerX}, ${match.centerY})")
-                    val res = executor.execute(ActionCommand.TapCoordinate(match.centerX, match.centerY))
-                    if (res.success) return true
-                }
-            }
-            delay(300L)
         }
         return false
     }
@@ -127,7 +210,6 @@ class AutonomousScreenAgent(
         val root = service?.rootInActiveWindow
         var targetNode: AccessibilityNodeInfo? = null
 
-        // 1. Locate editable node on screen
         if (root != null) {
             val (_, elements) = ScreenSemanticParser.parseActiveScreen(root)
             val editable = elements.find { it.isEditable }
@@ -139,12 +221,10 @@ class AutonomousScreenAgent(
         }
 
         if (targetNode == null) {
-            // Tap any candidate label to bring up focus & keyboard
             clickSemanticTarget(clickTargetCandidates, waitTimeoutMs = 1200L)
             delay(400L)
         }
 
-        // Type directly into active focus
         val typeResult = executor.execute(ActionCommand.TypeText(text))
         return typeResult.success
     }
@@ -158,12 +238,18 @@ class AutonomousScreenAgent(
         return res.success
     }
 
-    /**
-     * Long-presses an element (e.g. to save image or open context menu).
-     */
-    suspend fun longPressCoordinate(x: Float, y: Float, durationMs: Long = 1000L): Boolean {
+    private suspend fun performSwipeGesture(
+        startX: Float,
+        startY: Float,
+        endX: Float,
+        endY: Float,
+        durationMs: Long = 300
+    ): Boolean {
         val s = service ?: return false
-        val path = android.graphics.Path().apply { moveTo(x, y) }
+        val path = android.graphics.Path().apply {
+            moveTo(startX, startY)
+            lineTo(endX, endY)
+        }
         val stroke = android.accessibilityservice.GestureDescription.StrokeDescription(path, 0, durationMs)
         val gesture = android.accessibilityservice.GestureDescription.Builder().addStroke(stroke).build()
 
