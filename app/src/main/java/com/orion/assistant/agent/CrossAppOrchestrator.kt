@@ -14,10 +14,10 @@ import java.io.File
 import java.io.FileOutputStream
 
 data class ComplexTaskGoal(
+    val rawPrompt: String,
     val recipientName: String?,
     val assetTopic: String,
-    val outputFormat: String, // "pdf", "image", etc.
-    val sourceContextApp: AppCapability = AppCapability.MESSAGING
+    val outputFormat: String
 )
 
 class CrossAppOrchestrator(private val context: Context) {
@@ -26,7 +26,7 @@ class CrossAppOrchestrator(private val context: Context) {
         private const val TAG = "CrossAppOrchestrator"
     }
 
-    private val capabilityRegistry = AppCapabilityRegistry(context)
+    private val dynamicAppSelector = DynamicAppSelector(context)
 
     private fun getExecutor(): ActionExecutor? {
         val service = OrionAccessibilityService.currentInstance ?: return null
@@ -34,7 +34,7 @@ class CrossAppOrchestrator(private val context: Context) {
     }
 
     /**
-     * Detects if the prompt is an autonomous cross-app workflow request.
+     * Parses the general intent from the user's prompt.
      */
     fun parseComplexGoal(prompt: String): ComplexTaskGoal? {
         val lower = prompt.lowercase()
@@ -48,6 +48,7 @@ class CrossAppOrchestrator(private val context: Context) {
             val format = if (lower.contains("pdf")) "pdf" else "image"
 
             return ComplexTaskGoal(
+                rawPrompt = prompt,
                 recipientName = recipient,
                 assetTopic = topic,
                 outputFormat = format
@@ -90,13 +91,12 @@ class CrossAppOrchestrator(private val context: Context) {
     }
 
     /**
-     * Executes the true autonomous cross-app multi-stage workflow:
-     * 1. Returns to Home Page 1 and navigates to WhatsApp via the App Drawer.
-     * 2. Inspects conversation context dynamically.
-     * 3. Returns to Home Page 1 and opens Gemini/ChatGPT via the App Drawer.
-     * 4. Dynamically analyzes the screen layout using the LLM, types the generation prompt, and submits.
-     * 5. Waits for generation and extracts the real generated image artifact into a PDF.
-     * 6. Returns to Home Page 1, navigates into WhatsApp, and autonomously attaches and sends the PDF.
+     * Executes the workflow by:
+     * 1. Querying installed launcher apps and asking the LLM to dynamically pick the apps.
+     * 2. Navigating through the home screen app drawer to the chosen generator app.
+     * 3. Using the fast Screen Navigator to perceive, type, and submit the prompt.
+     * 4. Converting the generated image artifact into a PDF.
+     * 5. Navigating to the chosen messaging app via app drawer and sending the document.
      */
     suspend fun executeCrossAppWorkflow(
         goal: ComplexTaskGoal,
@@ -106,51 +106,53 @@ class CrossAppOrchestrator(private val context: Context) {
             ?: return ActionResult(false, "Orchestrator", "Accessibility Service is not enabled. Please enable Orion under Accessibility settings.")
 
         val screenAgent = AutonomousScreenAgent(context, executor)
-        Log.d(TAG, "Starting autonomous cross-app workflow for goal: $goal")
 
         // -----------------------------------------------------------------------------------------
-        // PHASE 1: Open WhatsApp via Home Screen App Drawer & check conversation
+        // DYNAMIC APP SELECTION: LLM evaluates real installed device apps
         // -----------------------------------------------------------------------------------------
-        val messagingApp = capabilityRegistry.findBestAppFor(AppCapability.MESSAGING)
-        val messagingName = messagingApp?.appName ?: "WhatsApp"
+        onProgress("Scanning device & letting LLM dynamically select apps for task...")
+        val plan = dynamicAppSelector.selectAppsForTask(goal.rawPrompt)
+        Log.d(TAG, "Dynamic execution plan: generator='${plan.selectedGeneratorApp}', messenger='${plan.selectedMessagingApp}'")
 
+        // -----------------------------------------------------------------------------------------
+        // PHASE 1: Verify recipient chat on the selected messaging app (e.g. WhatsApp / Telegram)
+        // -----------------------------------------------------------------------------------------
         if (goal.recipientName != null) {
-            onProgress("Phase 1/4: Going to Home Screen (Page 1) to open $messagingName via App Drawer...")
-            screenAgent.openAppViaDrawer(messagingName)
+            onProgress("Phase 1/4: Launching ${plan.selectedMessagingApp} via App Drawer for ${goal.recipientName}...")
+            screenAgent.openAppViaDrawer(plan.selectedMessagingApp)
             delay(2000L)
 
-            // Dynamic LLM screen step to search and open recipient's chat
-            onProgress("Searching for ${goal.recipientName} in $messagingName...")
             screenAgent.clickSemanticTarget(listOf("Search", "Ask Meta AI or search", "Search…"))
             delay(500L)
             executor.execute(ActionCommand.TypeText(goal.recipientName))
             delay(1000L)
             screenAgent.clickSemanticTarget(listOf(goal.recipientName))
-            delay(1500L)
+            delay(1200L)
         }
 
         // -----------------------------------------------------------------------------------------
-        // PHASE 2: Go to Home Page 1, Open Gemini / ChatGPT via App Drawer & Generate Poster
+        // PHASE 2: Launch selected Generator App (e.g. ChatGPT / Gemini) via App Drawer
         // -----------------------------------------------------------------------------------------
-        val aiApp = capabilityRegistry.findBestAppFor(AppCapability.AI_IMAGE_GENERATOR)
-        val selectedAiName = aiApp?.appName ?: "Gemini"
+        onProgress("Phase 2/4: Launching dynamically chosen generator: ${plan.selectedGeneratorApp}...")
+        screenAgent.openAppViaDrawer(plan.selectedGeneratorApp)
+        delay(2500L)
 
-        onProgress("Phase 2/4: Returning to Home Screen to launch $selectedAiName via App Drawer...")
-        screenAgent.openAppViaDrawer(selectedAiName)
-        delay(3000L)
+        // Step Loop: Autonomous Screen Navigator perceives layout & inputs prompt
+        onProgress("Navigator model sensing ${plan.selectedGeneratorApp} screen layout...")
+        screenAgent.executeAutonomousStepLoop(
+            subGoal = "Find chat input and focus field in ${plan.selectedGeneratorApp}",
+            maxSteps = 2,
+            onProgress = onProgress
+        )
 
-        val generationPrompt = "Generate a full-screen vibrant ${goal.assetTopic} with traditional festive art, high resolution, no watermarks."
-
-        // Enter prompt into Gemini using multi-strategy focus & typing
-        onProgress("Entering prompt into $selectedAiName...")
+        onProgress("Entering prompt: '${plan.promptToUse}'...")
         screenAgent.typeIntoInputField(
-            generationPrompt,
+            plan.promptToUse,
             listOf("Ask Gemini", "Message", "Ask anything", "Prompt", "Type a message", "Ask")
         )
-        delay(800L)
+        delay(600L)
 
-        // Submit prompt (Taps Send button or bottom-right send coordinate)
-        onProgress("Submitting prompt to $selectedAiName...")
+        onProgress("Submitting prompt in ${plan.selectedGeneratorApp}...")
         screenAgent.submitInput()
 
         // Wait for image generation
@@ -159,19 +161,18 @@ class CrossAppOrchestrator(private val context: Context) {
             delay(1000L)
             elapsed++
             if (elapsed % 3 == 0) {
-                onProgress("Generating poster in $selectedAiName (${elapsed}s)...")
+                onProgress("Generating image in ${plan.selectedGeneratorApp} (${elapsed}s)...")
             }
         }
 
-        // Tap or save generated image
-        onProgress("Extracting generated image from $selectedAiName...")
+        // Extract or download image
+        onProgress("Extracting generated poster from ${plan.selectedGeneratorApp}...")
         val clickedSave = screenAgent.clickSemanticTarget(
             listOf("Download", "Save", "Save image", "Share", "More options"),
             waitTimeoutMs = 2500L
         )
 
         if (!clickedSave) {
-            // Tap center screen where generated image is displayed
             val metrics = android.content.res.Resources.getSystem().displayMetrics
             executor.execute(ActionCommand.TapCoordinate(metrics.widthPixels / 2f, metrics.heightPixels * 0.45f))
             delay(800L)
@@ -180,16 +181,16 @@ class CrossAppOrchestrator(private val context: Context) {
         delay(2000L)
 
         // -----------------------------------------------------------------------------------------
-        // PHASE 3: Acquire Poster Image & Convert to PDF
+        // PHASE 3: Convert Generated Asset to PDF
         // -----------------------------------------------------------------------------------------
-        onProgress("Phase 3/4: Converting generated image to PDF...")
+        onProgress("Phase 3/4: Converting generated poster into PDF document...")
         var posterImageFile = PdfConverter.findLatestDownloadedImage(context)
 
         if (posterImageFile == null || (System.currentTimeMillis() - posterImageFile.lastModified() > 60_000L)) {
-            Log.d(TAG, "Capturing high-resolution generated visual frame from screen buffer...")
+            Log.d(TAG, "Capturing high-resolution visual frame from screen buffer...")
             val screenBitmap = ScreenCaptureManager.captureCurrentScreen()
             if (screenBitmap != null) {
-                val capturedFile = File(context.cacheDir, "gemini_poster_${System.currentTimeMillis()}.png")
+                val capturedFile = File(context.cacheDir, "generated_poster_${System.currentTimeMillis()}.png")
                 FileOutputStream(capturedFile).use { out ->
                     screenBitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
                 }
@@ -202,10 +203,10 @@ class CrossAppOrchestrator(private val context: Context) {
         } else null
 
         // -----------------------------------------------------------------------------------------
-        // PHASE 4: Open WhatsApp via App Drawer & Autonomously Deliver PDF
+        // PHASE 4: Open Selected Messenger via App Drawer & Autonomously Deliver Document
         // -----------------------------------------------------------------------------------------
-        onProgress("Phase 4/4: Returning to Home Screen to launch $messagingName via App Drawer...")
-        screenAgent.openAppViaDrawer(messagingName)
+        onProgress("Phase 4/4: Opening ${plan.selectedMessagingApp} via App Drawer to dispatch PDF...")
+        screenAgent.openAppViaDrawer(plan.selectedMessagingApp)
         delay(2000L)
 
         if (goal.recipientName != null) {
@@ -218,7 +219,7 @@ class CrossAppOrchestrator(private val context: Context) {
         }
 
         // Tap Attach
-        onProgress("Navigating WhatsApp chat artifacts: Tapping Attach...")
+        onProgress("Tapping Attach in ${plan.selectedMessagingApp}...")
         val clickedAttach = screenAgent.clickSemanticTarget(
             listOf("Attach", "Attach…", "Share", "attachment"),
             waitTimeoutMs = 3000L
@@ -232,13 +233,13 @@ class CrossAppOrchestrator(private val context: Context) {
             delay(1000L)
         }
 
-        // Select Document
-        onProgress("Selecting Document from attachment options...")
+        // Tap Document
+        onProgress("Selecting Document option...")
         screenAgent.clickSemanticTarget(listOf("Document", "Documents", "document"))
         delay(1500L)
 
-        // Tap the recent PDF
-        onProgress("Selecting the newly created PDF...")
+        // Select the newly generated PDF
+        onProgress("Selecting the newly generated PDF...")
         val clickedDoc = screenAgent.clickSemanticTarget(
             listOf("Orion_Poster", "Browse other docs", "Recent", "PDF", "Just now"),
             waitTimeoutMs = 2500L
@@ -250,12 +251,12 @@ class CrossAppOrchestrator(private val context: Context) {
             delay(1000L)
         }
 
-        // Tap Send in WhatsApp
+        // Tap Send
         onProgress("Sending PDF to ${goal.recipientName ?: "contact"}...")
         screenAgent.clickSemanticTarget(listOf("Send", "send", "Send document", "arrow_forward"))
         delay(1500L)
 
-        val successMsg = "Autonomous workflow complete! Navigated via App Drawer, generated on $selectedAiName, converted to PDF, and dispatched to ${goal.recipientName ?: "contact"} on WhatsApp."
+        val successMsg = "Autonomous workflow complete! Dynamically selected [${plan.selectedGeneratorApp}], generated asset, converted to PDF, and delivered via [${plan.selectedMessagingApp}]."
         onProgress(successMsg)
         return ActionResult(true, "Orion CrossApp", successMsg)
     }

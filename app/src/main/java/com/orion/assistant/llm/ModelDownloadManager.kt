@@ -29,7 +29,10 @@ class ModelDownloadManager(private val context: Context) {
     companion object {
         private const val PREFS_NAME = "orion_model_prefs"
         private const val KEY_ACTIVE_MODEL = "active_model_filename"
-        const val DEFAULT_MODEL_NAME = "qwen2.5-1.5b-instruct-q4_k_m.gguf"
+        private const val KEY_NAVIGATOR_MODEL = "active_navigator_model_filename"
+
+        const val DEFAULT_PRIMARY_MODEL = "qwen2.5-1.5b-instruct-q4_k_m.gguf"
+        const val DEFAULT_NAVIGATOR_MODEL = "qwen2.5-0.5b-instruct-q4_k_m.gguf"
     }
 
     private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -48,36 +51,59 @@ class ModelDownloadManager(private val context: Context) {
             if (!saved.isNullOrBlank() && File(modelsDir, saved).exists()) {
                 return saved
             }
-            // Fallback to first existing .gguf file if any
             val existing = listDownloadedModels().firstOrNull()
-            return existing?.name ?: DEFAULT_MODEL_NAME
+            return existing?.name ?: DEFAULT_PRIMARY_MODEL
         }
         set(value) {
             prefs.edit().putString(KEY_ACTIVE_MODEL, value).apply()
         }
 
+    var activeNavigatorModelFilename: String
+        get() {
+            val saved = prefs.getString(KEY_NAVIGATOR_MODEL, null)
+            if (!saved.isNullOrBlank() && File(modelsDir, saved).exists()) {
+                return saved
+            }
+            // Check if there is an existing 0.5b or lightweight model
+            val existing05B = listDownloadedModels().find { it.name.contains("0.5b", ignoreCase = true) }
+            return existing05B?.name ?: activeModelFilename
+        }
+        set(value) {
+            prefs.edit().putString(KEY_NAVIGATOR_MODEL, value).apply()
+        }
+
     val activeModelFile: File
         get() = File(modelsDir, activeModelFilename)
 
-    fun isModelDownloaded(): Boolean {
-        val list = listDownloadedModels()
-        return list.isNotEmpty()
+    val activeNavigatorModelFile: File
+        get() = File(modelsDir, activeNavigatorModelFilename)
+
+    fun isModelDownloaded(role: ModelRole = ModelRole.PRIMARY_REASONER): Boolean {
+        return when (role) {
+            ModelRole.PRIMARY_REASONER -> listDownloadedModels().isNotEmpty()
+            ModelRole.SCREEN_NAVIGATOR -> activeNavigatorModelFile.exists() && activeNavigatorModelFile.length() > 10_000_000L
+        }
     }
 
     fun listDownloadedModels(): List<File> {
         return modelsDir.listFiles { file ->
-            file.extension.equals("gguf", ignoreCase = true) && file.length() > 10_000_000L // >10MB
+            file.extension.equals("gguf", ignoreCase = true) && file.length() > 10_000_000L
         }?.toList() ?: emptyList()
     }
 
     suspend fun downloadModel(
         downloadUrl: String,
         filename: String,
-        expectedSizeBytes: Long = 0L
+        expectedSizeBytes: Long = 0L,
+        role: ModelRole = ModelRole.PRIMARY_REASONER
     ): Boolean = withContext(Dispatchers.IO) {
         val targetFile = File(modelsDir, filename)
         if (targetFile.exists() && targetFile.length() > 50_000_000L) {
-            activeModelFilename = filename
+            if (role == ModelRole.SCREEN_NAVIGATOR) {
+                activeNavigatorModelFilename = filename
+            } else {
+                activeModelFilename = filename
+            }
             _downloadState.value = DownloadState.Completed(filename)
             return@withContext true
         }
@@ -118,15 +144,15 @@ class ModelDownloadManager(private val context: Context) {
             }
 
             val contentLength = connection.contentLengthLong.let {
-                if (it > 0) it else if (expectedSizeBytes > 0) expectedSizeBytes else 900_000_000L
+                if (it > 0) it else expectedSizeBytes
             }
 
             inputStream = connection.inputStream
             outputStream = FileOutputStream(tempFile)
 
             val buffer = ByteArray(64 * 1024)
+            var totalRead = 0L
             var bytesRead: Int
-            var totalBytesRead = 0L
             var lastUpdate = System.currentTimeMillis()
 
             while (inputStream.read(buffer).also { bytesRead = it } != -1) {
@@ -137,30 +163,42 @@ class ModelDownloadManager(private val context: Context) {
                 }
 
                 outputStream.write(buffer, 0, bytesRead)
-                totalBytesRead += bytesRead
+                totalRead += bytesRead
 
                 val now = System.currentTimeMillis()
-                if (now - lastUpdate > 250) {
-                    val percent = (totalBytesRead.toFloat() / contentLength.toFloat()).coerceIn(0f, 1f)
-                    _downloadState.value = DownloadState.Downloading(filename, percent, totalBytesRead, contentLength)
+                if (now - lastUpdate > 300 || totalRead == contentLength) {
+                    val percent = if (contentLength > 0) (totalRead.toFloat() / contentLength.toFloat()) else 0f
+                    _downloadState.value = DownloadState.Downloading(
+                        modelName = filename,
+                        progressPercent = percent.coerceIn(0f, 1f),
+                        downloadedBytes = totalRead,
+                        totalBytes = contentLength
+                    )
                     lastUpdate = now
                 }
             }
 
             outputStream.flush()
+            outputStream.close()
+            outputStream = null
 
-            if (tempFile.renameTo(targetFile) || (targetFile.delete() && tempFile.renameTo(targetFile))) {
-                activeModelFilename = filename
+            if (tempFile.renameTo(targetFile)) {
+                if (role == ModelRole.SCREEN_NAVIGATOR) {
+                    activeNavigatorModelFilename = filename
+                } else {
+                    activeModelFilename = filename
+                }
                 _downloadState.value = DownloadState.Completed(filename)
-                true
+                return@withContext true
             } else {
-                _downloadState.value = DownloadState.Error("Failed to save model to disk.")
-                false
+                _downloadState.value = DownloadState.Error("Failed to rename temporary file to $filename")
+                return@withContext false
             }
+
         } catch (e: Exception) {
             tempFile.delete()
-            _downloadState.value = DownloadState.Error(e.message ?: "Download connection error")
-            false
+            _downloadState.value = DownloadState.Error(e.localizedMessage ?: "Network connection error")
+            return@withContext false
         } finally {
             try { outputStream?.close() } catch (_: Exception) {}
             try { inputStream?.close() } catch (_: Exception) {}
@@ -170,10 +208,6 @@ class ModelDownloadManager(private val context: Context) {
 
     fun cancelDownload() {
         isCancelled = true
-    }
-
-    fun deleteModel(filename: String): Boolean {
-        val file = File(modelsDir, filename)
-        return if (file.exists()) file.delete() else false
+        _downloadState.value = DownloadState.Idle
     }
 }

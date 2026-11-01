@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import com.orion.assistant.llm.LlamaCppRuntime
 import com.orion.assistant.llm.ModelDecision
+import com.orion.assistant.llm.ModelRole
 import com.orion.assistant.model.ActionCommand
 import com.orion.assistant.model.ActionResult
 import com.orion.assistant.model.ScrollDirection
@@ -22,10 +23,7 @@ import kotlinx.coroutines.delay
 
 /**
  * AutonomousScreenAgent: Dynamic closed-loop perceptual UI navigation agent.
- * 1. Homes the device to Page 1 and opens the app drawer.
- * 2. Uses robust multi-strategy text entry (ACTION_SET_TEXT, Paste, Physical Focus Tap).
- * 3. Uses on-device LLM to perceive the active screen, choose the exact click/swipe,
- *    and achieve navigation goals autonomously.
+ * Driven by the high-speed SCREEN_NAVIGATOR model for real-time perceive-think-act loops.
  */
 class AutonomousScreenAgent(
     private val context: Context,
@@ -63,7 +61,7 @@ class AutonomousScreenAgent(
         delay(1000L)
 
         // 3. Search and click matching app
-        val searched = typeIntoInputField(
+        typeIntoInputField(
             appName,
             listOf("Search apps", "Search", "Search your phone", "App search")
         )
@@ -83,11 +81,83 @@ class AutonomousScreenAgent(
     }
 
     /**
+     * Autonomous Perception Loop: Continuously parses the active screen and asks the
+     * Screen Navigator model to evaluate the next physical touch, swipe, or input action.
+     */
+    suspend fun executeAutonomousStepLoop(
+        subGoal: String,
+        maxSteps: Int = 4,
+        onProgress: ((String) -> Unit)? = null
+    ): ActionResult {
+        var stepCount = 0
+
+        while (stepCount < maxSteps) {
+            stepCount++
+            val screenDesc = executor.refreshScreenContext()
+
+            val navigatorPrompt = """
+                You are a real-time Android screen navigator.
+                Given the ACTIVE SCREEN UI ELEMENTS and the goal, output ONLY the next action.
+
+                === ACTIVE SCREEN UI ELEMENTS ===
+                $screenDesc
+
+                GOAL: $subGoal
+
+                Respond ONLY with a JSON object:
+                {"thought": "<reason>", "action": "click", "index": <element_number>}
+                {"thought": "<reason>", "action": "click", "text": "<exact_button_text>"}
+                {"thought": "<reason>", "action": "type", "text": "<text_to_type>"}
+                {"thought": "<reason>", "action": "scroll", "direction": "up"|"down"}
+                {"thought": "<reason>", "action": "done", "message": "<completion_summary>"}
+            """.trimIndent()
+
+            onProgress?.invoke("Navigating ($stepCount/$maxSteps): Sensing screen layout...")
+            val decision = llamaRuntime.decideNextAction(
+                systemPrompt = navigatorPrompt,
+                userGoal = subGoal,
+                role = ModelRole.SCREEN_NAVIGATOR
+            )
+
+            Log.d(TAG, "Navigator step $stepCount decision: ${decision.actionName} - ${decision.thought}")
+            val json = decision.rawJson
+
+            when (decision.actionName.lowercase()) {
+                "click" -> {
+                    val index = json?.optInt("index", -1) ?: -1
+                    val text = json?.optString("text", null)
+                    val targetIndex = if (index >= 0) index else null
+                    executor.execute(ActionCommand.Click(targetIndex = targetIndex, targetText = text))
+                    delay(800L)
+                }
+
+                "type" -> {
+                    val text = json?.optString("text", "") ?: ""
+                    typeIntoInputField(text)
+                    delay(800L)
+                }
+
+                "scroll" -> {
+                    val dir = if (json?.optString("direction") == "up") ScrollDirection.UP else ScrollDirection.DOWN
+                    scroll(dir)
+                    delay(800L)
+                }
+
+                "done" -> {
+                    return ActionResult(true, "Navigator", decision.directMessage ?: "Sub-task completed.")
+                }
+
+                else -> {
+                    delay(500L)
+                }
+            }
+        }
+
+        return ActionResult(true, "Navigator", "Completed screen actions for '$subGoal'")
+    }
+
+    /**
      * Robust multi-strategy text input designed for complex apps like Gemini and WhatsApp.
-     * Strategy 1: Find editable node, physically tap it to summon cursor and keyboard.
-     * Strategy 2: Call ACTION_SET_TEXT directly on node and root focus.
-     * Strategy 3: Copy text to system clipboard and trigger ACTION_PASTE.
-     * Strategy 4: Fallback to coordinate tap near bottom of screen and type.
      */
     suspend fun typeIntoInputField(
         text: String,
@@ -96,7 +166,6 @@ class AutonomousScreenAgent(
         Log.d(TAG, "Attempting to type text: '$text'")
         val root = service?.rootInActiveWindow
 
-        // Step 1: Scan for editable element
         var targetElement: SemanticElement? = null
         if (root != null) {
             val (_, elements) = ScreenSemanticParser.parseActiveScreen(root)
@@ -106,19 +175,16 @@ class AutonomousScreenAgent(
                 }
         }
 
-        // Tap the input box to focus it
         if (targetElement != null) {
             Log.d(TAG, "Tapping input element at (${targetElement.centerX}, ${targetElement.centerY})")
             executor.execute(ActionCommand.TapCoordinate(targetElement.centerX, targetElement.centerY))
             delay(400L)
         } else {
-            // Coordinate tap fallback: In Gemini, input bar is at ~88% of screen height
             val dm = Resources.getSystem().displayMetrics
             executor.execute(ActionCommand.TapCoordinate(dm.widthPixels * 0.45f, dm.heightPixels * 0.88f))
             delay(400L)
         }
 
-        // Step 2: Try ACTION_SET_TEXT on target node or focused node
         val freshRoot = service?.rootInActiveWindow
         val focusedNode = freshRoot?.findFocus(AccessibilityNodeInfo.FOCUS_INPUT)
             ?: targetElement?.nodeRef
@@ -134,7 +200,6 @@ class AutonomousScreenAgent(
             }
         }
 
-        // Step 3: Clipboard + ACTION_PASTE Fallback
         try {
             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
             if (clipboard != null) {
@@ -154,15 +219,10 @@ class AutonomousScreenAgent(
             Log.e(TAG, "Clipboard paste error: ${e.message}")
         }
 
-        // Step 4: Generic executor fallback
         val typeResult = executor.execute(ActionCommand.TypeText(text))
         return typeResult.success
     }
 
-    /**
-     * Submits or sends the typed message in Gemini / WhatsApp / Chat apps.
-     * Looks for "Send", "Submit", "arrow", or taps the send button position (bottom right).
-     */
     suspend fun submitInput(): Boolean {
         delay(500L)
         val clicked = clickSemanticTarget(
@@ -172,91 +232,11 @@ class AutonomousScreenAgent(
 
         if (clicked) return true
 
-        // Physical tap fallback: Bottom right of screen where the send arrow is located in Gemini & WhatsApp
         val dm = Resources.getSystem().displayMetrics
         val sendX = dm.widthPixels * 0.92f
         val sendY = dm.heightPixels * 0.88f
-        Log.d(TAG, "Tapping send coordinate fallback at ($sendX, $sendY)")
         val res = executor.execute(ActionCommand.TapCoordinate(sendX, sendY))
         return res.success
-    }
-
-    /**
-     * Uses the local LLM to analyze the active screen hierarchy and execute the best next step
-     * toward completing the specified sub-task.
-     */
-    suspend fun stepIntelligently(
-        subGoal: String,
-        onProgress: ((String) -> Unit)? = null
-    ): ActionResult {
-        val screenDesc = executor.refreshScreenContext()
-        val systemPrompt = """
-            You are Orion navigating an Android screen.
-            Active screen hierarchy:
-            $screenDesc
-
-            Goal: $subGoal
-
-            Choose the exact next action. Respond ONLY with a JSON action:
-            {"action": "click", "text": "<label>", "index": <optional_index>}
-            {"action": "type", "text": "<string>"}
-            {"action": "scroll", "direction": "up"|"down"|"left"|"right"}
-            {"action": "respond", "message": "<done_or_status>"}
-        """.trimIndent()
-
-        onProgress?.invoke("Analyzing screen layout for '$subGoal'...")
-        val decision = llamaRuntime.decideNextAction(systemPrompt, subGoal)
-        Log.d(TAG, "LLM decision: action=${decision.actionName}, thought=${decision.thought}")
-
-        val json = decision.rawJson
-        return when (decision.actionName.lowercase()) {
-            "click" -> {
-                val index = json?.optInt("index", -1) ?: -1
-                val text = json?.optString("text", null)
-                val targetIndex = if (index >= 0) index else null
-                executor.execute(ActionCommand.Click(targetIndex = targetIndex, targetText = text))
-            }
-            "type" -> {
-                val text = json?.optString("text", "") ?: ""
-                typeIntoInputField(text)
-                ActionResult(true, "Type", "Typed $text")
-            }
-            "scroll" -> {
-                val dir = when (json?.optString("direction")?.lowercase()) {
-                    "up" -> ScrollDirection.UP
-                    "left" -> ScrollDirection.LEFT
-                    "right" -> ScrollDirection.RIGHT
-                    else -> ScrollDirection.DOWN
-                }
-                scroll(dir)
-                ActionResult(true, "Scroll", "Scrolled $dir")
-            }
-            else -> {
-                ActionResult(true, "Step", decision.directMessage ?: "Analyzed screen.")
-            }
-        }
-    }
-
-    suspend fun waitForElement(
-        matchingText: String,
-        timeoutMs: Long = 6000L,
-        intervalMs: Long = 400L
-    ): SemanticElement? {
-        val startTime = System.currentTimeMillis()
-        while (System.currentTimeMillis() - startTime < timeoutMs) {
-            val root = service?.rootInActiveWindow
-            if (root != null) {
-                val (_, elements) = ScreenSemanticParser.parseActiveScreen(root)
-                val match = elements.find { el ->
-                    el.text.contains(matchingText, ignoreCase = true)
-                }
-                if (match != null) {
-                    return match
-                }
-            }
-            delay(intervalMs)
-        }
-        return null
     }
 
     suspend fun clickSemanticTarget(

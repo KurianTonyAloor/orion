@@ -28,13 +28,17 @@ import kotlinx.coroutines.launch
 @Composable
 fun ModelHubSearchDialog(
     downloadManager: ModelDownloadManager,
+    initialRole: ModelRole = ModelRole.PRIMARY_REASONER,
     onDismiss: () -> Unit,
     onModelSelected: (String) -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val downloadState by downloadManager.downloadState.collectAsState()
 
-    var searchQuery by remember { mutableStateOf("qwen 2.5 1.5b") }
+    var selectedRole by remember { mutableStateOf(initialRole) }
+    var searchQuery by remember {
+        mutableStateOf(if (initialRole == ModelRole.SCREEN_NAVIGATOR) "qwen 2.5 0.5b" else "qwen 2.5 1.5b")
+    }
     var isSearching by remember { mutableStateOf(false) }
     var searchResults by remember { mutableStateOf<List<HuggingFaceModel>>(emptyList()) }
     var selectedRepoId by remember { mutableStateOf<String?>(null) }
@@ -52,8 +56,10 @@ fun ModelHubSearchDialog(
         }
     }
 
-    LaunchedEffect(Unit) {
-        doSearch(searchQuery)
+    LaunchedEffect(selectedRole) {
+        val query = if (selectedRole == ModelRole.SCREEN_NAVIGATOR) "qwen 2.5 0.5b" else "qwen 2.5 1.5b"
+        searchQuery = query
+        doSearch(query)
     }
 
     Dialog(
@@ -65,7 +71,7 @@ fun ModelHubSearchDialog(
         Surface(
             modifier = Modifier
                 .fillMaxWidth(0.95f)
-                .fillMaxHeight(0.85f),
+                .fillMaxHeight(0.88f),
             shape = RoundedCornerShape(24.dp),
             color = Color(0xFF0F172A),
             tonalElevation = 8.dp
@@ -101,6 +107,38 @@ fun ModelHubSearchDialog(
                     }
                 }
 
+                Spacer(modifier = Modifier.height(10.dp))
+
+                // Role Selector Tabs (Primary Reasoner vs Screen Navigator)
+                TabRow(
+                    selectedTabIndex = if (selectedRole == ModelRole.PRIMARY_REASONER) 0 else 1,
+                    containerColor = Color(0xFF1E293B),
+                    contentColor = Color(0xFF00E5FF)
+                ) {
+                    Tab(
+                        selected = selectedRole == ModelRole.PRIMARY_REASONER,
+                        onClick = { selectedRole = ModelRole.PRIMARY_REASONER },
+                        text = {
+                            Text(
+                                "🧠 Primary (1.5B - 3B)",
+                                fontSize = 12.sp,
+                                fontWeight = if (selectedRole == ModelRole.PRIMARY_REASONER) FontWeight.Bold else FontWeight.Normal
+                            )
+                        }
+                    )
+                    Tab(
+                        selected = selectedRole == ModelRole.SCREEN_NAVIGATOR,
+                        onClick = { selectedRole = ModelRole.SCREEN_NAVIGATOR },
+                        text = {
+                            Text(
+                                "⚡ Navigator (0.5B Fast)",
+                                fontSize = 12.sp,
+                                fontWeight = if (selectedRole == ModelRole.SCREEN_NAVIGATOR) FontWeight.Bold else FontWeight.Normal
+                            )
+                        }
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(12.dp))
 
                 // Search Bar
@@ -108,7 +146,13 @@ fun ModelHubSearchDialog(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("Search GGUF models on Hugging Face...", color = Color(0xFF64748B), fontSize = 13.sp) },
+                    placeholder = {
+                        Text(
+                            if (selectedRole == ModelRole.SCREEN_NAVIGATOR) "Search fast 0.5B navigator models..." else "Search 1.5B/3B reasoning models...",
+                            color = Color(0xFF64748B),
+                            fontSize = 13.sp
+                        )
+                    },
                     trailingIcon = {
                         IconButton(onClick = { doSearch(searchQuery) }) {
                             Icon(Icons.Default.Search, contentDescription = "Search", tint = Color(0xFF00E5FF))
@@ -126,12 +170,18 @@ fun ModelHubSearchDialog(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // Recommended Presets Chips (Optimized for SD695)
+                // Presets
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    listOf("Qwen 2.5 1.5B", "SmolLM2 1.7B", "Llama 3.2 1B", "Phi 3.5").forEach { preset ->
+                    val presets = if (selectedRole == ModelRole.SCREEN_NAVIGATOR) {
+                        listOf("Qwen 2.5 0.5B", "SmolLM2 360M", "Qwen 2 0.5B")
+                    } else {
+                        listOf("Qwen 2.5 1.5B", "SmolLM2 1.7B", "Llama 3.2 1B")
+                    }
+
+                    presets.forEach { preset ->
                         FilterChip(
                             selected = searchQuery.equals(preset, ignoreCase = true),
                             onClick = {
@@ -141,163 +191,132 @@ fun ModelHubSearchDialog(
                             label = { Text(preset, fontSize = 11.sp) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = Color(0xFF00E5FF).copy(alpha = 0.2f),
-                                selectedLabelColor = Color(0xFF00E5FF)
+                                selectedLabelColor = Color(0xFF00E5FF),
+                                containerColor = Color(0xFF1E293B),
+                                labelColor = Color(0xFF94A3B8)
                             )
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
-                // Active Download Status Card (if downloading)
-                when (val state = downloadState) {
-                    is DownloadState.Downloading -> {
+                // Live Download Progress Bar
+                AnimatedVisibility(visible = downloadState is DownloadState.Downloading) {
+                    val current = downloadState as? DownloadState.Downloading
+                    if (current != null) {
                         Surface(
-                            color = Color(0xFF1E293B),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
                             shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
+                            color = Color(0xFF1E293B)
                         ) {
-                            Column(modifier = Modifier.padding(14.dp)) {
-                                Text(
-                                    text = "Downloading: ${state.modelName}",
-                                    color = Color.White,
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                                Spacer(modifier = Modifier.height(6.dp))
-                                LinearProgressIndicator(
-                                    progress = { state.progressPercent },
-                                    modifier = Modifier.fillMaxWidth().height(6.dp),
-                                    color = Color(0xFF00E5FF),
-                                    trackColor = Color(0xFF334155)
-                                )
-                                Spacer(modifier = Modifier.height(6.dp))
+                            Column(modifier = Modifier.padding(12.dp)) {
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
-                                    val mbDownloaded = state.downloadedBytes / (1024 * 1024)
-                                    val mbTotal = state.totalBytes / (1024 * 1024)
-                                    Text("$mbDownloaded MB / $mbTotal MB", color = Color(0xFF94A3B8), fontSize = 11.sp)
-                                    Text("${(state.progressPercent * 100).toInt()}%", color = Color(0xFF00E5FF), fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                    Text(
+                                        text = "Downloading [${selectedRole.name}]: ${current.modelName}",
+                                        color = Color.White,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    Text(
+                                        text = "${(current.progressPercent * 100).toInt()}%",
+                                        color = Color(0xFF00E5FF),
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
                                 }
-                                TextButton(
-                                    onClick = { downloadManager.cancelDownload() },
-                                    modifier = Modifier.align(Alignment.End)
-                                ) {
-                                    Text("Cancel Download", color = Color(0xFFFF5252), fontSize = 11.sp)
-                                }
+                                Spacer(modifier = Modifier.height(6.dp))
+                                LinearProgressIndicator(
+                                    progress = { current.progressPercent },
+                                    modifier = Modifier.fillMaxWidth().height(6.dp).clip(RoundedCornerShape(3.dp)),
+                                    color = Color(0xFF00E5FF),
+                                    trackColor = Color(0xFF334155)
+                                )
                             }
                         }
                     }
-                    is DownloadState.Completed -> {
-                        Surface(
-                            color = Color(0xFF132A20),
-                            shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(12.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text("Active Model: ${state.modelName}", color = Color(0xFF00E676), fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                                TextButton(onClick = {
-                                    onModelSelected(state.modelName)
-                                    onDismiss()
-                                }) {
-                                    Text("Use Now", color = Color(0xFF00E5FF), fontSize = 12.sp)
-                                }
-                            }
-                        }
-                    }
-                    is DownloadState.Error -> {
-                        Surface(
-                            color = Color(0xFF2A1515),
-                            shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
-                        ) {
-                            Text("Error: ${state.message}", color = Color(0xFFFF5252), fontSize = 12.sp, modifier = Modifier.padding(12.dp))
-                        }
-                    }
-                    else -> {}
                 }
 
-                // Results List
+                // Search Results
                 if (isSearching) {
                     Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(color = Color(0xFF00E5FF), modifier = Modifier.size(32.dp))
-                    }
-                } else if (searchResults.isEmpty()) {
-                    Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        Text("No GGUF models found for '$searchQuery'", color = Color(0xFF64748B), fontSize = 13.sp)
+                        CircularProgressIndicator(color = Color(0xFF00E5FF))
                     }
                 } else {
                     LazyColumn(
-                        modifier = Modifier.weight(1f).fillMaxWidth(),
+                        modifier = Modifier.weight(1f),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(searchResults) { model ->
-                            val isExpanded = selectedRepoId == model.id
+                            val isSelected = selectedRepoId == model.id
 
                             Surface(
-                                color = Color(0xFF1E293B),
-                                shape = RoundedCornerShape(12.dp),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clickable {
-                                        if (isExpanded) {
+                                        if (isSelected) {
                                             selectedRepoId = null
                                             repoVariants = emptyList()
                                         } else {
                                             selectedRepoId = model.id
                                             isLoadingVariants = true
                                             scope.launch {
-                                                repoVariants = HuggingFaceApiClient.fetchModelVariants(model.id)
+                                                repoVariants = HuggingFaceApiClient.fetchGgufVariants(model.id)
                                                 isLoadingVariants = false
                                             }
                                         }
-                                    }
+                                    },
+                                shape = RoundedCornerShape(14.dp),
+                                color = if (isSelected) Color(0xFF1E293B) else Color(0xFF162032)
                             ) {
                                 Column(modifier = Modifier.padding(14.dp)) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceBetween
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Column(modifier = Modifier.weight(1f)) {
                                             Text(
-                                                text = model.modelName,
+                                                text = model.id,
                                                 color = Color.White,
-                                                fontSize = 14.sp,
                                                 fontWeight = FontWeight.Bold,
+                                                fontSize = 13.sp,
                                                 maxLines = 1,
                                                 overflow = TextOverflow.Ellipsis
                                             )
                                             Text(
-                                                text = "by ${model.author}",
-                                                color = Color(0xFF94A3B8),
-                                                fontSize = 12.sp
+                                                text = "Downloads: ${model.downloads} • Likes: ${model.likes}",
+                                                color = Color(0xFF64748B),
+                                                fontSize = 11.sp
                                             )
                                         }
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Icon(Icons.Default.Download, contentDescription = null, tint = Color(0xFF64748B), modifier = Modifier.size(14.dp))
-                                            Spacer(modifier = Modifier.width(2.dp))
-                                            Text("${model.downloads}", color = Color(0xFF64748B), fontSize = 11.sp)
-                                        }
+                                        Icon(
+                                            imageVector = if (isSelected) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                                            contentDescription = null,
+                                            tint = Color(0xFF00E5FF)
+                                        )
                                     }
 
-                                    // Expanded Quantization Variants
-                                    AnimatedVisibility(visible = isExpanded) {
-                                        Column(modifier = Modifier.padding(top = 12.dp)) {
-                                            HorizontalDivider(color = Color(0xFF334155), thickness = 0.5.dp)
-                                            Spacer(modifier = Modifier.height(8.dp))
-                                            Text("Available Quantizations:", color = Color(0xFF00E5FF), fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                                            Spacer(modifier = Modifier.height(6.dp))
-
+                                    // Quantized Variants List
+                                    AnimatedVisibility(visible = isSelected) {
+                                        Column(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(top = 10.dp)
+                                        ) {
                                             if (isLoadingVariants) {
-                                                CircularProgressIndicator(color = Color(0xFF00E5FF), modifier = Modifier.size(24.dp).align(Alignment.CenterHorizontally))
+                                                CircularProgressIndicator(
+                                                    color = Color(0xFF00E5FF),
+                                                    modifier = Modifier.size(24.dp).align(Alignment.CenterHorizontally)
+                                                )
                                             } else if (repoVariants.isEmpty()) {
                                                 Text("No .gguf files found in this repository.", color = Color(0xFF64748B), fontSize = 12.sp)
                                             } else {
@@ -331,7 +350,8 @@ fun ModelHubSearchDialog(
                                                                     downloadManager.downloadModel(
                                                                         downloadUrl = variant.downloadUrl,
                                                                         filename = variant.filename,
-                                                                        expectedSizeBytes = variant.sizeBytes
+                                                                        expectedSizeBytes = variant.sizeBytes,
+                                                                        role = selectedRole
                                                                     )
                                                                 }
                                                             },
@@ -339,7 +359,7 @@ fun ModelHubSearchDialog(
                                                             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
                                                             modifier = Modifier.height(32.dp)
                                                         ) {
-                                                            Text("Get", color = Color(0xFF0A0E17), fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                                            Text("Assign as $selectedRole", color = Color(0xFF0A0E17), fontSize = 10.sp, fontWeight = FontWeight.Bold)
                                                         }
                                                     }
                                                 }

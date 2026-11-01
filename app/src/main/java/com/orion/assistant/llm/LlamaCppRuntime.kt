@@ -25,34 +25,42 @@ class LlamaCppRuntime(private val context: Context) {
     companion object {
         private const val TAG = "OrionLlamaRuntime"
 
-        // Persistent in-memory model cache: Load once, stay warm!
+        // Persistent dual model cache in RAM
         @Volatile
-        private var cachedModel: LlamaModel? = null
+        private var cachedPrimaryModel: LlamaModel? = null
         @Volatile
-        private var cachedModelPath: String? = null
+        private var cachedPrimaryPath: String? = null
+
+        @Volatile
+        private var cachedNavigatorModel: LlamaModel? = null
+        @Volatile
+        private var cachedNavigatorPath: String? = null
+
         private val modelMutex = Mutex()
     }
 
     private val downloadManager = ModelDownloadManager(context)
 
-    val isModelLoaded: Boolean
-        get() = downloadManager.isModelDownloaded()
-
-    val currentModelPath: String
-        get() = downloadManager.activeModelFile.absolutePath
+    fun isModelLoaded(role: ModelRole = ModelRole.PRIMARY_REASONER): Boolean {
+        return downloadManager.isModelDownloaded(role)
+    }
 
     /**
-     * Executes cognitive decision-making on the input prompt.
-     * Evaluates screen context and user instruction to select the correct action script.
+     * Executes cognitive decision-making on the input prompt using either Primary Reasoner or Screen Navigator.
      */
-    suspend fun decideNextAction(systemPrompt: String, userGoal: String): ModelDecision = withContext(Dispatchers.Default) {
-        // If local model is downloaded and ready, run native inference with a strict 8-second watchdog:
-        if (isModelLoaded) {
-            val generatedText = withTimeoutOrNull(8000L) {
+    suspend fun decideNextAction(
+        systemPrompt: String,
+        userGoal: String,
+        role: ModelRole = ModelRole.PRIMARY_REASONER
+    ): ModelDecision = withContext(Dispatchers.Default) {
+        val watchdogMs = if (role == ModelRole.SCREEN_NAVIGATOR) 3500L else 8000L
+
+        if (downloadManager.isModelDownloaded(role)) {
+            val generatedText = withTimeoutOrNull(watchdogMs) {
                 try {
-                    runLocalInference(systemPrompt, userGoal)
+                    runLocalInference(systemPrompt, userGoal, role)
                 } catch (e: Throwable) {
-                    Log.e(TAG, "Native inference execution error", e)
+                    Log.e(TAG, "Native inference error ($role)", e)
                     null
                 }
             }
@@ -62,55 +70,67 @@ class LlamaCppRuntime(private val context: Context) {
             }
         }
 
-        // Contextual Fallback Decision Engine (if model is still loading, busy, or timed out):
+        // Fast Contextual Fallback Decision Engine
         return@withContext cognitiveContextFallback(userGoal, systemPrompt)
     }
 
-    /**
-     * Native inference bridge for the GGUF model on Snapdragon 695.
-     * Uses persistent warm model instance with 4 threads and 1024 context window.
-     */
-    private suspend fun runLocalInference(systemPrompt: String, userGoal: String): String = withContext(Dispatchers.IO) {
-        val modelFile = downloadManager.activeModelFile
+    private suspend fun runLocalInference(
+        systemPrompt: String,
+        userGoal: String,
+        role: ModelRole
+    ): String = withContext(Dispatchers.IO) {
+        val modelFile = if (role == ModelRole.SCREEN_NAVIGATOR) {
+            downloadManager.activeNavigatorModelFile
+        } else {
+            downloadManager.activeModelFile
+        }
+
         if (!modelFile.exists() || modelFile.length() < 10_000_000L) {
-            return@withContext "{\"action\": \"respond\", \"message\": \"Model file is still downloading or not ready.\"}"
+            return@withContext "{\"action\": \"respond\", \"message\": \"Model file not ready.\"}"
         }
 
         modelMutex.withLock {
             try {
-                // If model path changed or not loaded yet, load and cache in memory
-                if (cachedModel == null || cachedModelPath != modelFile.absolutePath) {
-                    cachedModel?.let {
+                val isNavigator = (role == ModelRole.SCREEN_NAVIGATOR)
+                val currentCached = if (isNavigator) cachedNavigatorModel else cachedPrimaryModel
+                val currentPath = if (isNavigator) cachedNavigatorPath else cachedPrimaryPath
+
+                val activeModel = if (currentCached == null || currentPath != modelFile.absolutePath) {
+                    currentCached?.let {
                         try { Llama.releaseModel(it) } catch (_: Throwable) {}
                     }
-                    cachedModel = null
 
-                    Log.d(TAG, "Loading GGUF model into memory: ${modelFile.name}")
-                    val config = LlamaConfig(contextSize = 1024, threads = 4)
-                    cachedModel = Llama.loadModel(modelFile.absolutePath, config)
-                    cachedModelPath = modelFile.absolutePath
-                    Log.d(TAG, "Model successfully cached in memory")
+                    Log.d(TAG, "Loading GGUF ($role) into memory: ${modelFile.name}")
+                    val threads = if (isNavigator) 4 else 4
+                    val ctxSize = if (isNavigator) 512 else 1024
+                    val config = LlamaConfig(contextSize = ctxSize, threads = threads)
+                    val loaded = Llama.loadModel(modelFile.absolutePath, config)
+
+                    if (isNavigator) {
+                        cachedNavigatorModel = loaded
+                        cachedNavigatorPath = modelFile.absolutePath
+                    } else {
+                        cachedPrimaryModel = loaded
+                        cachedPrimaryPath = modelFile.absolutePath
+                    }
+                    loaded
+                } else {
+                    currentCached
                 }
 
-                val model = cachedModel ?: return@withContext ""
-
+                val maxTokens = if (isNavigator) 64 else 128
                 val result = Llama.complete(
-                    model = model,
+                    model = activeModel,
                     prompt = userGoal,
                     systemPrompt = systemPrompt,
-                    maxTokens = 128
+                    maxTokens = maxTokens
                 )
 
                 val text = result.text.trim()
-                Log.d(TAG, "Llama generation completed: $text")
+                Log.d(TAG, "Llama ($role) generation: $text")
                 return@withContext text
             } catch (t: Throwable) {
-                Log.e(TAG, "Llama inference error: ${t.message}", t)
-                // Invalidate cache on crash so it re-attempts cleanly next time
-                try {
-                    cachedModel?.let { Llama.releaseModel(it) }
-                } catch (_: Throwable) {}
-                cachedModel = null
+                Log.e(TAG, "Llama inference error ($role): ${t.message}", t)
                 throw t
             }
         }
@@ -126,7 +146,6 @@ class LlamaCppRuntime(private val context: Context) {
             .substringBefore("Available tool scripts", "")
             .trim()
 
-        // 1. Tool execution heuristics
         when {
             lowerUserGoal == "screenshot" || lowerUserGoal.contains("take a screenshot") || lowerUserGoal.contains("capture screen") -> {
                 return ModelDecision("User requested display snapshot", "capture_screen", null, null)
@@ -165,7 +184,6 @@ class LlamaCppRuntime(private val context: Context) {
             }
         }
 
-        // 2. Knowledge & Natural Conversation Queries (Dynamic intelligent answers)
         val answer = when {
             lowerUserGoal.contains("what does orion mean") || lowerUserGoal.contains("who are you") || lowerUserGoal.contains("what is orion") -> {
                 "Orion is an autonomous on-device AI assistant engineered for the Snapdragon 695. The name Orion is inspired by the prominent celestial hunter constellation. Orion operates locally on your device to inspect screens, execute cross-app workflows, generate assets, and interact with applications autonomously without cloud dependencies."
@@ -182,71 +200,28 @@ class LlamaCppRuntime(private val context: Context) {
             lowerUserGoal.contains("how are you") -> {
                 "I am running optimally on-device, ready to execute your system tasks and cross-app workflows."
             }
-            lowerUserGoal.startsWith("what ") || lowerUserGoal.startsWith("who ") || lowerUserGoal.startsWith("where ") || lowerUserGoal.startsWith("how ") || lowerUserGoal.startsWith("why ") || lowerUserGoal.startsWith("can you ") -> {
-                "I analyzed your query: \"$userGoal\". Orion is actively ready to answer knowledge queries, control device settings, navigate apps, generate posters, convert documents to PDF, and share deliverables via WhatsApp."
-            }
             else -> {
-                "I processed your command \"$userGoal\". You can instruct me to execute cross-app workflows (e.g. generate posters and send them as PDFs), open apps, inspect screens, or manage device actions."
+                "I processed your command \"$userGoal\". Orion is ready to execute cross-app workflows, inspect screens, and perform device tasks autonomously."
             }
         }
 
         return ModelDecision("Knowledge response", "respond", null, answer)
     }
 
-    /**
-     * Parses the model output and ensures that raw JSON is never leaked to the user.
-     */
     private fun parseModelDecision(rawOutput: String): ModelDecision {
         val trimmed = rawOutput.trim()
 
-        // 1. Try standard JSON extraction if the model chose a tool action
         if (trimmed.contains("{") && trimmed.contains("}")) {
             val jsonSubstring = trimmed.substring(trimmed.indexOf("{"), trimmed.lastIndexOf("}") + 1)
             try {
                 val json = JSONObject(jsonSubstring)
                 val action = json.optString("action", "respond")
                 val thought = json.optString("thought", "")
-
-                val msg = when {
-                    json.has("message") -> json.getString("message")
-                    json.has("text") -> json.getString("text")
-                    action == "respond" -> json.optString("details", "")
-                    else -> null
-                }
-
-                return ModelDecision(
-                    thought = thought,
-                    actionName = action,
-                    rawJson = json,
-                    directMessage = msg?.cleanMessage()
-                )
-            } catch (_: Exception) {
-                val messageRegex = "\"message\"\\s*:\\s*\"(.*?)\"".toRegex(RegexOption.DOT_MATCHES_ALL)
-                val match = messageRegex.find(jsonSubstring)
-                if (match != null) {
-                    val extracted = match.groupValues[1]
-                    return ModelDecision(
-                        thought = "Extracted response",
-                        actionName = "respond",
-                        rawJson = null,
-                        directMessage = extracted.cleanMessage()
-                    )
-                }
-            }
+                val message = if (json.has("message")) json.getString("message") else null
+                return ModelDecision(thought, action, json, message)
+            } catch (_: Exception) {}
         }
 
-        // 2. If it's plain text (standard conversational LLM response), present it directly
-        return ModelDecision(
-            thought = "Direct response",
-            actionName = "respond",
-            rawJson = null,
-            directMessage = trimmed.cleanMessage()
-        )
-    }
-
-    private fun String.cleanMessage(): String {
-        return this.replace("\\\"", "\"")
-            .replace("\\n", "\n")
-            .trim()
+        return ModelDecision("Natural text completion", "respond", null, trimmed)
     }
 }
