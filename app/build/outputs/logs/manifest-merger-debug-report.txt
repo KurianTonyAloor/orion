@@ -1,0 +1,512 @@
+-- Merging decision tree log ---
+manifest
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:2:1-109:12
+INJECTED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:2:1-109:12
+INJECTED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:2:1-109:12
+INJECTED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:2:1-109:12
+MERGED from [dev.ffmpegkit-maintained:llama-android:0.1.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\3f74451cd19a9fc87f90d99432d860f6\transformed\llama-android-0.1.1\AndroidManifest.xml:2:1-10:12
+MERGED from [androidx.camera:camera-lifecycle:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\c24636649a73920b11a4a0a17ffc24e6\transformed\camera-lifecycle-1.4.0\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.camera:camera-camera2:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8f74178ae03404305b77664f042bd1a5\transformed\camera-camera2-1.4.0\AndroidManifest.xml:17:1-36:12
+MERGED from [androidx.camera:camera-core:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\cd3ce5046bda05eef00b4dfb10bbfb64\transformed\camera-core-1.4.0\AndroidManifest.xml:17:1-36:12
+MERGED from [androidx.compose.material3:material3-android:1.3.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\d3b3207b45e6214b162be57aa1d5f644\transformed\material3-release\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.compose.material:material-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\3b1a3f7aa1ad9d9260d2473367bf3562\transformed\material-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.animation:animation-core-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\625e6f37431183868cdf5b7f7bd1e0d1\transformed\animation-core-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.material:material-ripple-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\bfa19691244b21e76bab4ff3f4f80e58\transformed\material-ripple-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.animation:animation-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\5350ba93e66738ef579c0fa21139b0f9\transformed\animation-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.foundation:foundation-layout-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\ccd9d84dfc1ea3c9db53540096d2f510\transformed\foundation-layout-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.foundation:foundation-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\0485a1ff959c96bad17432fbfbebb0ef\transformed\foundation-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-tooling-data-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\588a55bab485bfa85d69fb67f7e39f52\transformed\ui-tooling-data-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-unit-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\3e861bf196a04760e215e9a6c45f89ba\transformed\ui-unit-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-geometry-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8aee69b4dd792dfb221812bbaa4aa88f\transformed\ui-geometry-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-util-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\24e9294ec015f8d259bd573d4e85a85e\transformed\ui-util-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-tooling-preview-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\235010af6e2806f3fbd2faf6dbc38cac\transformed\ui-tooling-preview-release\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.compose.ui:ui-graphics-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\9ca68bb5a3533c381192b72f491d4cb5\transformed\ui-graphics-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-text-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\025b6e216d388299537c92dd54d7594c\transformed\ui-text-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.emoji2:emoji2:1.3.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8488254444a7ba43d8134c7adfb6992f\transformed\emoji2-1.3.0\AndroidManifest.xml:17:1-35:12
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\4f994891982c9eb29a323917cf46f87e\transformed\lifecycle-process-2.8.6\AndroidManifest.xml:17:1-35:12
+MERGED from [androidx.lifecycle:lifecycle-runtime-compose-android:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\1473cd62bd7c802d2238bc06349feb7f\transformed\lifecycle-runtime-compose-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-android:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\c67bf9a546c326362b0dce02ff90100a\transformed\lifecycle-viewmodel-release\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\d1e6ac62390e94361d0665887ea18a39\transformed\lifecycle-livedata-core-ktx-2.8.6\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\e0d9f4ce373ce630cff9423a631a5f74\transformed\lifecycle-livedata-core-2.8.6\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\bd1b9ca4b8454f635a2bc430b8d253d5\transformed\savedstate-ktx-1.2.1\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.savedstate:savedstate:1.2.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\60d6b0f7c38703a7b0263f97712bfe8c\transformed\savedstate-1.2.1\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-runtime-android:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\0e485be6c87895ea1e105ee998397bcb\transformed\lifecycle-runtime-release\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\22fcfb158d5971bb39d93f25dde7651d\transformed\lifecycle-viewmodel-ktx-2.8.6\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\7ee690c7c37dace54ac5beb977b9afd8\transformed\lifecycle-viewmodel-savedstate-2.8.6\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\22dde7bcabf9c7f8375181b9db8b4fd3\transformed\lifecycle-livedata-2.8.6\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\219c489c3cf909236d9918683d8e5241\transformed\lifecycle-runtime-ktx-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-compose-android:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\bc0bf8534852101ea2e788c3930c2e92\transformed\lifecycle-viewmodel-compose-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.material:material-icons-extended-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\532595b8b7f4ea68003cb370c8e4441e\transformed\material-icons-extended-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.material:material-icons-core-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\173cdb26e779b8e1a41ff6d01f5f8397\transformed\material-icons-core-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8befadc8537e3ae54c09d5d29b160612\transformed\ui-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-tooling-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\ba776c8c6bff9df62efd0d034a1ee2cb\transformed\ui-tooling-release\AndroidManifest.xml:17:1-28:12
+MERGED from [androidx.activity:activity-compose:1.9.3] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\cb8943fcbd46cf0fa49cb7337b92313a\transformed\activity-compose-1.9.3\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.activity:activity-ktx:1.9.3] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\bff306b4551a6151103a255bc9b141e2\transformed\activity-ktx-1.9.3\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.activity:activity:1.9.3] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\edae8fba823d4aef4beba032a2aab122\transformed\activity-1.9.3\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.autofill:autofill:1.0.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\4d3c94f7653ea1f3e8388a7296ce6d93\transformed\autofill-1.0.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.graphics:graphics-path:1.0.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\50d8a2b1ea2a1e830c8fec8ba715c006\transformed\graphics-path-1.0.1\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.core:core:1.13.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\368acdecd4178642460f01c708cd6c3b\transformed\core-1.13.1\AndroidManifest.xml:17:1-30:12
+MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\186f91fd43e8044dd936910c54f186af\transformed\customview-poolingcontainer-1.0.0\AndroidManifest.xml:17:1-23:12
+MERGED from [androidx.core:core-ktx:1.13.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\722cfa59b344d1c7a825a24484191006\transformed\core-ktx-1.13.1\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.runtime:runtime-saveable-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\7e4fab271ae426e38d24555f51f759fe\transformed\runtime-saveable-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.runtime:runtime-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8743f4101d9654bcb6887ea5cd57669b\transformed\runtime-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.annotation:annotation-experimental:1.4.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\eeee6975c8ec46105bba5eb21acb279c\transformed\annotation-experimental-1.4.1\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:17:1-55:12
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2100d670aba13501ab1e7c16553d969a\transformed\startup-runtime-1.1.1\AndroidManifest.xml:17:1-33:12
+MERGED from [androidx.tracing:tracing:1.2.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8da3543e6cf01d5faeabeebdb521022a\transformed\tracing-1.2.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.tracing:tracing-ktx:1.2.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\a4e7701b97a53d80230cd89ee64ab7e0\transformed\tracing-ktx-1.2.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\717006134ee9dfec415894aa97ccb590\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:17:1-27:12
+MERGED from [androidx.exifinterface:exifinterface:1.3.2] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\6391547837f92759d5ee1cf345b84ba3\transformed\exifinterface-1.3.2\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2f80aa054c2cc92afac1e88180c35544\transformed\interpolator-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.arch.core:core-runtime:2.2.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\81405bde1bf6f63681e426e084ca5c14\transformed\core-runtime-2.2.0\AndroidManifest.xml:17:1-22:12
+	package
+		INJECTED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml
+	android:versionName
+		INJECTED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml
+	xmlns:tools
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:3:5-51
+	android:versionCode
+		INJECTED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:2:11-69
+uses-permission#android.permission.INTERNET
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:6:5-67
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:6:22-64
+uses-permission#android.permission.ACCESS_NETWORK_STATE
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:7:5-79
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:7:22-76
+uses-permission#android.permission.RECORD_AUDIO
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:10:5-71
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:10:22-68
+uses-permission#android.permission.MODIFY_AUDIO_SETTINGS
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:11:5-80
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:11:22-77
+uses-permission#android.permission.CAMERA
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:12:5-65
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:12:22-62
+uses-feature#android.hardware.camera
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:13:5-85
+	android:required
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:13:58-82
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:13:19-57
+uses-permission#android.permission.FOREGROUND_SERVICE
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:16:5-77
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:16:22-74
+uses-permission#android.permission.FOREGROUND_SERVICE_MICROPHONE
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:17:5-88
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:17:22-85
+uses-permission#android.permission.FOREGROUND_SERVICE_PHONE_CALL
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:18:5-88
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:18:22-85
+uses-permission#android.permission.FOREGROUND_SERVICE_SPECIAL_USE
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:19:5-89
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:19:22-86
+uses-permission#android.permission.POST_NOTIFICATIONS
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:20:5-77
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:20:22-74
+uses-permission#android.permission.WAKE_LOCK
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:21:5-68
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:21:22-65
+uses-permission#android.permission.VIBRATE
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:22:5-66
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:22:22-63
+uses-permission#android.permission.MANAGE_OWN_CALLS
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:25:5-75
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:25:22-72
+uses-permission#android.permission.USE_FULL_SCREEN_INTENT
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:26:5-81
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:26:22-78
+uses-permission#android.permission.SYSTEM_ALERT_WINDOW
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:29:5-78
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:29:22-75
+queries
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:32:5-39:15
+intent#action:name:android.speech.RecognitionService
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:33:9-35:18
+action#android.speech.RecognitionService
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:34:13-72
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:34:21-69
+intent#action:name:android.intent.action.TTS_SERVICE
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:36:9-38:18
+action#android.intent.action.TTS_SERVICE
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:37:13-72
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:37:21-69
+application
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:41:5-107:19
+INJECTED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:41:5-107:19
+MERGED from [androidx.camera:camera-camera2:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8f74178ae03404305b77664f042bd1a5\transformed\camera-camera2-1.4.0\AndroidManifest.xml:23:5-34:19
+MERGED from [androidx.camera:camera-camera2:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8f74178ae03404305b77664f042bd1a5\transformed\camera-camera2-1.4.0\AndroidManifest.xml:23:5-34:19
+MERGED from [androidx.camera:camera-core:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\cd3ce5046bda05eef00b4dfb10bbfb64\transformed\camera-core-1.4.0\AndroidManifest.xml:23:5-34:19
+MERGED from [androidx.camera:camera-core:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\cd3ce5046bda05eef00b4dfb10bbfb64\transformed\camera-core-1.4.0\AndroidManifest.xml:23:5-34:19
+MERGED from [androidx.emoji2:emoji2:1.3.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8488254444a7ba43d8134c7adfb6992f\transformed\emoji2-1.3.0\AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.emoji2:emoji2:1.3.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8488254444a7ba43d8134c7adfb6992f\transformed\emoji2-1.3.0\AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\4f994891982c9eb29a323917cf46f87e\transformed\lifecycle-process-2.8.6\AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\4f994891982c9eb29a323917cf46f87e\transformed\lifecycle-process-2.8.6\AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.compose.ui:ui-tooling-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\ba776c8c6bff9df62efd0d034a1ee2cb\transformed\ui-tooling-release\AndroidManifest.xml:22:5-26:19
+MERGED from [androidx.compose.ui:ui-tooling-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\ba776c8c6bff9df62efd0d034a1ee2cb\transformed\ui-tooling-release\AndroidManifest.xml:22:5-26:19
+MERGED from [androidx.core:core:1.13.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\368acdecd4178642460f01c708cd6c3b\transformed\core-1.13.1\AndroidManifest.xml:28:5-89
+MERGED from [androidx.core:core:1.13.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\368acdecd4178642460f01c708cd6c3b\transformed\core-1.13.1\AndroidManifest.xml:28:5-89
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:23:5-53:19
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:23:5-53:19
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2100d670aba13501ab1e7c16553d969a\transformed\startup-runtime-1.1.1\AndroidManifest.xml:25:5-31:19
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2100d670aba13501ab1e7c16553d969a\transformed\startup-runtime-1.1.1\AndroidManifest.xml:25:5-31:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\717006134ee9dfec415894aa97ccb590\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\717006134ee9dfec415894aa97ccb590\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
+	android:extractNativeLibs
+		INJECTED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml
+	android:appComponentFactory
+		ADDED from [androidx.core:core:1.13.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\368acdecd4178642460f01c708cd6c3b\transformed\core-1.13.1\AndroidManifest.xml:28:18-86
+	android:supportsRtl
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:49:9-35
+	android:label
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:47:9-41
+	android:fullBackupContent
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:45:9-54
+	android:roundIcon
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:48:9-54
+	android:icon
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:46:9-43
+	android:allowBackup
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:43:9-35
+	android:theme
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:50:9-43
+	android:dataExtractionRules
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:44:9-65
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:42:9-41
+activity#com.orion.assistant.MainActivity
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:53:9-62:20
+	android:windowSoftInputMode
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:56:13-55
+	android:exported
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:55:13-36
+	android:theme
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:57:13-47
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:54:13-41
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:58:13-61:29
+action#android.intent.action.MAIN
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:59:17-69
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:59:25-66
+category#android.intent.category.LAUNCHER
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:60:17-77
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:60:27-74
+activity#com.orion.assistant.ui.call.IncomingCallActivity
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:65:9-71:55
+	android:turnScreenOn
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:69:13-40
+	android:showWhenLocked
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:68:13-42
+	android:launchMode
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:70:13-43
+	android:exported
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:67:13-37
+	android:theme
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:71:13-52
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:66:13-57
+service#com.orion.assistant.service.accessibility.OrionAccessibilityService
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:74:9-84:19
+	android:exported
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:77:13-36
+	android:permission
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:76:13-79
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:75:13-76
+intent-filter#action:name:android.accessibilityservice.AccessibilityService
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:78:13-80:29
+action#android.accessibilityservice.AccessibilityService
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:79:17-92
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:79:25-89
+meta-data#android.accessibilityservice
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:81:13-83:72
+	android:resource
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:83:17-69
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:82:17-60
+service#com.orion.assistant.service.telecom.OrionConnectionService
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:87:9-94:19
+	android:exported
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:90:13-36
+	android:permission
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:89:13-84
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:88:13-67
+intent-filter#action:name:android.telecom.ConnectionService
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:91:13-93:29
+action#android.telecom.ConnectionService
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:92:17-76
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:92:25-73
+service#com.orion.assistant.service.overlay.OrionFloatingService
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:97:9-105:19
+	android:enabled
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:99:13-35
+	android:exported
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:100:13-37
+	android:foregroundServiceType
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:101:13-55
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:98:13-65
+property#android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE
+ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:102:13-104:94
+	android:value
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:104:17-91
+	android:name
+		ADDED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:103:17-76
+uses-sdk
+INJECTED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml
+INJECTED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml
+MERGED from [dev.ffmpegkit-maintained:llama-android:0.1.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\3f74451cd19a9fc87f90d99432d860f6\transformed\llama-android-0.1.1\AndroidManifest.xml:8:5-44
+MERGED from [dev.ffmpegkit-maintained:llama-android:0.1.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\3f74451cd19a9fc87f90d99432d860f6\transformed\llama-android-0.1.1\AndroidManifest.xml:8:5-44
+MERGED from [androidx.camera:camera-lifecycle:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\c24636649a73920b11a4a0a17ffc24e6\transformed\camera-lifecycle-1.4.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.camera:camera-lifecycle:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\c24636649a73920b11a4a0a17ffc24e6\transformed\camera-lifecycle-1.4.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.camera:camera-camera2:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8f74178ae03404305b77664f042bd1a5\transformed\camera-camera2-1.4.0\AndroidManifest.xml:21:5-44
+MERGED from [androidx.camera:camera-camera2:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8f74178ae03404305b77664f042bd1a5\transformed\camera-camera2-1.4.0\AndroidManifest.xml:21:5-44
+MERGED from [androidx.camera:camera-core:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\cd3ce5046bda05eef00b4dfb10bbfb64\transformed\camera-core-1.4.0\AndroidManifest.xml:21:5-44
+MERGED from [androidx.camera:camera-core:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\cd3ce5046bda05eef00b4dfb10bbfb64\transformed\camera-core-1.4.0\AndroidManifest.xml:21:5-44
+MERGED from [androidx.compose.material3:material3-android:1.3.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\d3b3207b45e6214b162be57aa1d5f644\transformed\material3-release\AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.material3:material3-android:1.3.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\d3b3207b45e6214b162be57aa1d5f644\transformed\material3-release\AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.material:material-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\3b1a3f7aa1ad9d9260d2473367bf3562\transformed\material-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\3b1a3f7aa1ad9d9260d2473367bf3562\transformed\material-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-core-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\625e6f37431183868cdf5b7f7bd1e0d1\transformed\animation-core-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-core-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\625e6f37431183868cdf5b7f7bd1e0d1\transformed\animation-core-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-ripple-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\bfa19691244b21e76bab4ff3f4f80e58\transformed\material-ripple-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-ripple-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\bfa19691244b21e76bab4ff3f4f80e58\transformed\material-ripple-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\5350ba93e66738ef579c0fa21139b0f9\transformed\animation-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\5350ba93e66738ef579c0fa21139b0f9\transformed\animation-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-layout-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\ccd9d84dfc1ea3c9db53540096d2f510\transformed\foundation-layout-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-layout-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\ccd9d84dfc1ea3c9db53540096d2f510\transformed\foundation-layout-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\0485a1ff959c96bad17432fbfbebb0ef\transformed\foundation-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\0485a1ff959c96bad17432fbfbebb0ef\transformed\foundation-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-tooling-data-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\588a55bab485bfa85d69fb67f7e39f52\transformed\ui-tooling-data-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-tooling-data-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\588a55bab485bfa85d69fb67f7e39f52\transformed\ui-tooling-data-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-unit-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\3e861bf196a04760e215e9a6c45f89ba\transformed\ui-unit-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-unit-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\3e861bf196a04760e215e9a6c45f89ba\transformed\ui-unit-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-geometry-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8aee69b4dd792dfb221812bbaa4aa88f\transformed\ui-geometry-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-geometry-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8aee69b4dd792dfb221812bbaa4aa88f\transformed\ui-geometry-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-util-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\24e9294ec015f8d259bd573d4e85a85e\transformed\ui-util-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-util-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\24e9294ec015f8d259bd573d4e85a85e\transformed\ui-util-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-tooling-preview-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\235010af6e2806f3fbd2faf6dbc38cac\transformed\ui-tooling-preview-release\AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.ui:ui-tooling-preview-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\235010af6e2806f3fbd2faf6dbc38cac\transformed\ui-tooling-preview-release\AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.ui:ui-graphics-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\9ca68bb5a3533c381192b72f491d4cb5\transformed\ui-graphics-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-graphics-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\9ca68bb5a3533c381192b72f491d4cb5\transformed\ui-graphics-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-text-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\025b6e216d388299537c92dd54d7594c\transformed\ui-text-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-text-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\025b6e216d388299537c92dd54d7594c\transformed\ui-text-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.emoji2:emoji2:1.3.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8488254444a7ba43d8134c7adfb6992f\transformed\emoji2-1.3.0\AndroidManifest.xml:21:5-44
+MERGED from [androidx.emoji2:emoji2:1.3.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8488254444a7ba43d8134c7adfb6992f\transformed\emoji2-1.3.0\AndroidManifest.xml:21:5-44
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\4f994891982c9eb29a323917cf46f87e\transformed\lifecycle-process-2.8.6\AndroidManifest.xml:21:5-44
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\4f994891982c9eb29a323917cf46f87e\transformed\lifecycle-process-2.8.6\AndroidManifest.xml:21:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-compose-android:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\1473cd62bd7c802d2238bc06349feb7f\transformed\lifecycle-runtime-compose-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-compose-android:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\1473cd62bd7c802d2238bc06349feb7f\transformed\lifecycle-runtime-compose-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-android:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\c67bf9a546c326362b0dce02ff90100a\transformed\lifecycle-viewmodel-release\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-android:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\c67bf9a546c326362b0dce02ff90100a\transformed\lifecycle-viewmodel-release\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\d1e6ac62390e94361d0665887ea18a39\transformed\lifecycle-livedata-core-ktx-2.8.6\AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\d1e6ac62390e94361d0665887ea18a39\transformed\lifecycle-livedata-core-ktx-2.8.6\AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\e0d9f4ce373ce630cff9423a631a5f74\transformed\lifecycle-livedata-core-2.8.6\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\e0d9f4ce373ce630cff9423a631a5f74\transformed\lifecycle-livedata-core-2.8.6\AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\bd1b9ca4b8454f635a2bc430b8d253d5\transformed\savedstate-ktx-1.2.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\bd1b9ca4b8454f635a2bc430b8d253d5\transformed\savedstate-ktx-1.2.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate:1.2.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\60d6b0f7c38703a7b0263f97712bfe8c\transformed\savedstate-1.2.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate:1.2.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\60d6b0f7c38703a7b0263f97712bfe8c\transformed\savedstate-1.2.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-android:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\0e485be6c87895ea1e105ee998397bcb\transformed\lifecycle-runtime-release\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-android:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\0e485be6c87895ea1e105ee998397bcb\transformed\lifecycle-runtime-release\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\22fcfb158d5971bb39d93f25dde7651d\transformed\lifecycle-viewmodel-ktx-2.8.6\AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\22fcfb158d5971bb39d93f25dde7651d\transformed\lifecycle-viewmodel-ktx-2.8.6\AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\7ee690c7c37dace54ac5beb977b9afd8\transformed\lifecycle-viewmodel-savedstate-2.8.6\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\7ee690c7c37dace54ac5beb977b9afd8\transformed\lifecycle-viewmodel-savedstate-2.8.6\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\22dde7bcabf9c7f8375181b9db8b4fd3\transformed\lifecycle-livedata-2.8.6\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\22dde7bcabf9c7f8375181b9db8b4fd3\transformed\lifecycle-livedata-2.8.6\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\219c489c3cf909236d9918683d8e5241\transformed\lifecycle-runtime-ktx-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\219c489c3cf909236d9918683d8e5241\transformed\lifecycle-runtime-ktx-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-compose-android:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\bc0bf8534852101ea2e788c3930c2e92\transformed\lifecycle-viewmodel-compose-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-compose-android:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\bc0bf8534852101ea2e788c3930c2e92\transformed\lifecycle-viewmodel-compose-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-icons-extended-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\532595b8b7f4ea68003cb370c8e4441e\transformed\material-icons-extended-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-icons-extended-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\532595b8b7f4ea68003cb370c8e4441e\transformed\material-icons-extended-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-icons-core-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\173cdb26e779b8e1a41ff6d01f5f8397\transformed\material-icons-core-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-icons-core-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\173cdb26e779b8e1a41ff6d01f5f8397\transformed\material-icons-core-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8befadc8537e3ae54c09d5d29b160612\transformed\ui-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8befadc8537e3ae54c09d5d29b160612\transformed\ui-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-tooling-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\ba776c8c6bff9df62efd0d034a1ee2cb\transformed\ui-tooling-release\AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.ui:ui-tooling-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\ba776c8c6bff9df62efd0d034a1ee2cb\transformed\ui-tooling-release\AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity-compose:1.9.3] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\cb8943fcbd46cf0fa49cb7337b92313a\transformed\activity-compose-1.9.3\AndroidManifest.xml:5:5-44
+MERGED from [androidx.activity:activity-compose:1.9.3] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\cb8943fcbd46cf0fa49cb7337b92313a\transformed\activity-compose-1.9.3\AndroidManifest.xml:5:5-44
+MERGED from [androidx.activity:activity-ktx:1.9.3] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\bff306b4551a6151103a255bc9b141e2\transformed\activity-ktx-1.9.3\AndroidManifest.xml:5:5-44
+MERGED from [androidx.activity:activity-ktx:1.9.3] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\bff306b4551a6151103a255bc9b141e2\transformed\activity-ktx-1.9.3\AndroidManifest.xml:5:5-44
+MERGED from [androidx.activity:activity:1.9.3] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\edae8fba823d4aef4beba032a2aab122\transformed\activity-1.9.3\AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity:1.9.3] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\edae8fba823d4aef4beba032a2aab122\transformed\activity-1.9.3\AndroidManifest.xml:20:5-44
+MERGED from [androidx.autofill:autofill:1.0.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\4d3c94f7653ea1f3e8388a7296ce6d93\transformed\autofill-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.autofill:autofill:1.0.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\4d3c94f7653ea1f3e8388a7296ce6d93\transformed\autofill-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.graphics:graphics-path:1.0.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\50d8a2b1ea2a1e830c8fec8ba715c006\transformed\graphics-path-1.0.1\AndroidManifest.xml:5:5-44
+MERGED from [androidx.graphics:graphics-path:1.0.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\50d8a2b1ea2a1e830c8fec8ba715c006\transformed\graphics-path-1.0.1\AndroidManifest.xml:5:5-44
+MERGED from [androidx.core:core:1.13.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\368acdecd4178642460f01c708cd6c3b\transformed\core-1.13.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core:1.13.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\368acdecd4178642460f01c708cd6c3b\transformed\core-1.13.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\186f91fd43e8044dd936910c54f186af\transformed\customview-poolingcontainer-1.0.0\AndroidManifest.xml:20:5-21:38
+MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\186f91fd43e8044dd936910c54f186af\transformed\customview-poolingcontainer-1.0.0\AndroidManifest.xml:20:5-21:38
+MERGED from [androidx.core:core-ktx:1.13.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\722cfa59b344d1c7a825a24484191006\transformed\core-ktx-1.13.1\AndroidManifest.xml:5:5-44
+MERGED from [androidx.core:core-ktx:1.13.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\722cfa59b344d1c7a825a24484191006\transformed\core-ktx-1.13.1\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.runtime:runtime-saveable-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\7e4fab271ae426e38d24555f51f759fe\transformed\runtime-saveable-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.runtime:runtime-saveable-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\7e4fab271ae426e38d24555f51f759fe\transformed\runtime-saveable-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.runtime:runtime-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8743f4101d9654bcb6887ea5cd57669b\transformed\runtime-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.runtime:runtime-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8743f4101d9654bcb6887ea5cd57669b\transformed\runtime-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.annotation:annotation-experimental:1.4.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\eeee6975c8ec46105bba5eb21acb279c\transformed\annotation-experimental-1.4.1\AndroidManifest.xml:5:5-44
+MERGED from [androidx.annotation:annotation-experimental:1.4.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\eeee6975c8ec46105bba5eb21acb279c\transformed\annotation-experimental-1.4.1\AndroidManifest.xml:5:5-44
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:21:5-44
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:21:5-44
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2100d670aba13501ab1e7c16553d969a\transformed\startup-runtime-1.1.1\AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2100d670aba13501ab1e7c16553d969a\transformed\startup-runtime-1.1.1\AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.tracing:tracing:1.2.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8da3543e6cf01d5faeabeebdb521022a\transformed\tracing-1.2.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.tracing:tracing:1.2.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8da3543e6cf01d5faeabeebdb521022a\transformed\tracing-1.2.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.tracing:tracing-ktx:1.2.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\a4e7701b97a53d80230cd89ee64ab7e0\transformed\tracing-ktx-1.2.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.tracing:tracing-ktx:1.2.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\a4e7701b97a53d80230cd89ee64ab7e0\transformed\tracing-ktx-1.2.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\717006134ee9dfec415894aa97ccb590\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\717006134ee9dfec415894aa97ccb590\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.exifinterface:exifinterface:1.3.2] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\6391547837f92759d5ee1cf345b84ba3\transformed\exifinterface-1.3.2\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.exifinterface:exifinterface:1.3.2] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\6391547837f92759d5ee1cf345b84ba3\transformed\exifinterface-1.3.2\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2f80aa054c2cc92afac1e88180c35544\transformed\interpolator-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2f80aa054c2cc92afac1e88180c35544\transformed\interpolator-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.2.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\81405bde1bf6f63681e426e084ca5c14\transformed\core-runtime-2.2.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.2.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\81405bde1bf6f63681e426e084ca5c14\transformed\core-runtime-2.2.0\AndroidManifest.xml:20:5-44
+	android:targetSdkVersion
+		INJECTED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml
+service#androidx.camera.core.impl.MetadataHolderService
+ADDED from [androidx.camera:camera-camera2:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8f74178ae03404305b77664f042bd1a5\transformed\camera-camera2-1.4.0\AndroidManifest.xml:24:9-33:19
+MERGED from [androidx.camera:camera-core:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\cd3ce5046bda05eef00b4dfb10bbfb64\transformed\camera-core-1.4.0\AndroidManifest.xml:29:9-33:78
+MERGED from [androidx.camera:camera-core:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\cd3ce5046bda05eef00b4dfb10bbfb64\transformed\camera-core-1.4.0\AndroidManifest.xml:29:9-33:78
+	tools:node
+		ADDED from [androidx.camera:camera-camera2:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8f74178ae03404305b77664f042bd1a5\transformed\camera-camera2-1.4.0\AndroidManifest.xml:29:13-31
+	android:enabled
+		ADDED from [androidx.camera:camera-camera2:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8f74178ae03404305b77664f042bd1a5\transformed\camera-camera2-1.4.0\AndroidManifest.xml:26:13-36
+	android:exported
+		ADDED from [androidx.camera:camera-camera2:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8f74178ae03404305b77664f042bd1a5\transformed\camera-camera2-1.4.0\AndroidManifest.xml:27:13-37
+	tools:ignore
+		ADDED from [androidx.camera:camera-camera2:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8f74178ae03404305b77664f042bd1a5\transformed\camera-camera2-1.4.0\AndroidManifest.xml:28:13-75
+	android:name
+		ADDED from [androidx.camera:camera-camera2:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8f74178ae03404305b77664f042bd1a5\transformed\camera-camera2-1.4.0\AndroidManifest.xml:25:13-75
+meta-data#androidx.camera.core.impl.MetadataHolderService.DEFAULT_CONFIG_PROVIDER
+ADDED from [androidx.camera:camera-camera2:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8f74178ae03404305b77664f042bd1a5\transformed\camera-camera2-1.4.0\AndroidManifest.xml:30:13-32:89
+	android:value
+		ADDED from [androidx.camera:camera-camera2:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8f74178ae03404305b77664f042bd1a5\transformed\camera-camera2-1.4.0\AndroidManifest.xml:32:17-86
+	android:name
+		ADDED from [androidx.camera:camera-camera2:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8f74178ae03404305b77664f042bd1a5\transformed\camera-camera2-1.4.0\AndroidManifest.xml:31:17-103
+provider#androidx.startup.InitializationProvider
+ADDED from [androidx.emoji2:emoji2:1.3.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8488254444a7ba43d8134c7adfb6992f\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\4f994891982c9eb29a323917cf46f87e\transformed\lifecycle-process-2.8.6\AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.lifecycle:lifecycle-process:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\4f994891982c9eb29a323917cf46f87e\transformed\lifecycle-process-2.8.6\AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2100d670aba13501ab1e7c16553d969a\transformed\startup-runtime-1.1.1\AndroidManifest.xml:26:9-30:34
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2100d670aba13501ab1e7c16553d969a\transformed\startup-runtime-1.1.1\AndroidManifest.xml:26:9-30:34
+	tools:node
+		ADDED from [androidx.emoji2:emoji2:1.3.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8488254444a7ba43d8134c7adfb6992f\transformed\emoji2-1.3.0\AndroidManifest.xml:28:13-31
+	android:authorities
+		ADDED from [androidx.emoji2:emoji2:1.3.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8488254444a7ba43d8134c7adfb6992f\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
+	android:exported
+		ADDED from [androidx.emoji2:emoji2:1.3.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8488254444a7ba43d8134c7adfb6992f\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
+	android:name
+		ADDED from [androidx.emoji2:emoji2:1.3.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8488254444a7ba43d8134c7adfb6992f\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
+meta-data#androidx.emoji2.text.EmojiCompatInitializer
+ADDED from [androidx.emoji2:emoji2:1.3.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8488254444a7ba43d8134c7adfb6992f\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.emoji2:emoji2:1.3.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8488254444a7ba43d8134c7adfb6992f\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.emoji2:emoji2:1.3.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8488254444a7ba43d8134c7adfb6992f\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+meta-data#androidx.lifecycle.ProcessLifecycleInitializer
+ADDED from [androidx.lifecycle:lifecycle-process:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\4f994891982c9eb29a323917cf46f87e\transformed\lifecycle-process-2.8.6\AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.lifecycle:lifecycle-process:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\4f994891982c9eb29a323917cf46f87e\transformed\lifecycle-process-2.8.6\AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.lifecycle:lifecycle-process:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\4f994891982c9eb29a323917cf46f87e\transformed\lifecycle-process-2.8.6\AndroidManifest.xml:30:17-78
+activity#androidx.compose.ui.tooling.PreviewActivity
+ADDED from [androidx.compose.ui:ui-tooling-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\ba776c8c6bff9df62efd0d034a1ee2cb\transformed\ui-tooling-release\AndroidManifest.xml:23:9-25:39
+	android:exported
+		ADDED from [androidx.compose.ui:ui-tooling-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\ba776c8c6bff9df62efd0d034a1ee2cb\transformed\ui-tooling-release\AndroidManifest.xml:25:13-36
+	android:name
+		ADDED from [androidx.compose.ui:ui-tooling-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\ba776c8c6bff9df62efd0d034a1ee2cb\transformed\ui-tooling-release\AndroidManifest.xml:24:13-71
+permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.13.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\368acdecd4178642460f01c708cd6c3b\transformed\core-1.13.1\AndroidManifest.xml:22:5-24:47
+	android:protectionLevel
+		ADDED from [androidx.core:core:1.13.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\368acdecd4178642460f01c708cd6c3b\transformed\core-1.13.1\AndroidManifest.xml:24:9-44
+	android:name
+		ADDED from [androidx.core:core:1.13.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\368acdecd4178642460f01c708cd6c3b\transformed\core-1.13.1\AndroidManifest.xml:23:9-81
+permission#com.orion.assistant.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.13.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\368acdecd4178642460f01c708cd6c3b\transformed\core-1.13.1\AndroidManifest.xml:22:5-24:47
+	android:protectionLevel
+		ADDED from [androidx.core:core:1.13.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\368acdecd4178642460f01c708cd6c3b\transformed\core-1.13.1\AndroidManifest.xml:24:9-44
+	android:name
+		ADDED from [androidx.core:core:1.13.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\368acdecd4178642460f01c708cd6c3b\transformed\core-1.13.1\AndroidManifest.xml:23:9-81
+uses-permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.13.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\368acdecd4178642460f01c708cd6c3b\transformed\core-1.13.1\AndroidManifest.xml:26:5-97
+	android:name
+		ADDED from [androidx.core:core:1.13.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\368acdecd4178642460f01c708cd6c3b\transformed\core-1.13.1\AndroidManifest.xml:26:22-94
+uses-permission#com.orion.assistant.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.13.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\368acdecd4178642460f01c708cd6c3b\transformed\core-1.13.1\AndroidManifest.xml:26:5-97
+	android:name
+		ADDED from [androidx.core:core:1.13.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\368acdecd4178642460f01c708cd6c3b\transformed\core-1.13.1\AndroidManifest.xml:26:22-94
+meta-data#androidx.profileinstaller.ProfileInstallerInitializer
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
+receiver#androidx.profileinstaller.ProfileInstallReceiver
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
+	android:enabled
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
+	android:exported
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
+	android:permission
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
+	android:directBootAware
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
+intent-filter#action:name:androidx.profileinstaller.action.INSTALL_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
+action#androidx.profileinstaller.action.INSTALL_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
+intent-filter#action:name:androidx.profileinstaller.action.SKIP_FILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
+action#androidx.profileinstaller.action.SKIP_FILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
+intent-filter#action:name:androidx.profileinstaller.action.SAVE_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
+action#androidx.profileinstaller.action.SAVE_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
+intent-filter#action:name:androidx.profileinstaller.action.BENCHMARK_OPERATION
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
+action#androidx.profileinstaller.action.BENCHMARK_OPERATION
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:25-92

@@ -57,6 +57,19 @@ class OrionAgent(
             return ActionResult(true, "CallUser", "Triggered incoming voice call")
         }
 
+        // =========================================================================
+        // CROSS-APP ORCHESTRATION: Autonomous multi-app workflows
+        // (e.g. "Sreehari texted me about onam poster make it and send it back as pdf")
+        // =========================================================================
+        val orchestrator = CrossAppOrchestrator(context)
+        val complexGoal = orchestrator.parseComplexGoal(trimmed)
+        if (complexGoal != null) {
+            return orchestrator.executeCrossAppWorkflow(complexGoal) { status ->
+                onProgress?.invoke(status)
+                com.orion.assistant.service.overlay.OrionFloatingService.updateStatus(status)
+            }
+        }
+
         // Multi-step goal detection (e.g. "Open YouTube and search for Lo-Fi")
         if (lower.contains(" and ") || (lower.startsWith("search ") && lower.contains(" on "))) {
             val planner = TaskPlanner(context)

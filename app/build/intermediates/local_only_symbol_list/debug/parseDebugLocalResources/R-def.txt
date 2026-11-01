@@ -1,0 +1,22 @@
+R_DEF: Internal format may change without notice
+local
+color background_dark
+color call_accept
+color call_decline
+color primary
+color primary_variant
+color surface_dark
+color text_primary
+drawable ic_launcher_background
+drawable ic_launcher_foreground
+mipmap ic_launcher
+mipmap ic_launcher_round
+string accessibility_service_description
+string app_name
+string call_notification_channel
+string call_notification_channel_desc
+style Theme.Orion
+style Theme.Orion.Call
+xml accessibility_service_config
+xml backup_rules
+xml data_extraction_rules

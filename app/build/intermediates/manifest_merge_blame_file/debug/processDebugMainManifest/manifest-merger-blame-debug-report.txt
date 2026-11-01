@@ -1,0 +1,315 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.orion.assistant"
+4    android:versionCode="1"
+5    android:versionName="1.0.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="28"
+9        android:targetSdkVersion="35" />
+10
+11    <!-- Network permissions for initial Hugging Face model download -->
+12    <uses-permission android:name="android.permission.INTERNET" />
+12-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:6:5-67
+12-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:6:22-64
+13    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+13-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:7:5-79
+13-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:7:22-76
+14
+15    <!-- Audio & Camera permissions -->
+16    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+16-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:10:5-71
+16-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:10:22-68
+17    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+17-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:11:5-80
+17-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:11:22-77
+18    <uses-permission android:name="android.permission.CAMERA" />
+18-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:12:5-65
+18-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:12:22-62
+19
+20    <uses-feature
+20-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:13:5-85
+21        android:name="android.hardware.camera"
+21-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:13:19-57
+22        android:required="false" />
+22-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:13:58-82
+23
+24    <!-- Foreground services for continuous agent & call background operation -->
+25    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+25-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:16:5-77
+25-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:16:22-74
+26    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+26-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:17:5-88
+26-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:17:22-85
+27    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_PHONE_CALL" />
+27-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:18:5-88
+27-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:18:22-85
+28    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+28-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:19:5-89
+28-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:19:22-86
+29    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+29-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:20:5-77
+29-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:20:22-74
+30    <uses-permission android:name="android.permission.WAKE_LOCK" />
+30-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:21:5-68
+30-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:21:22-65
+31    <uses-permission android:name="android.permission.VIBRATE" />
+31-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:22:5-66
+31-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:22:22-63
+32
+33    <!-- Telecom and Calling permissions -->
+34    <uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
+34-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:25:5-75
+34-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:25:22-72
+35    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+35-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:26:5-81
+35-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:26:22-78
+36
+37    <!-- Overlay permission for floating assistant UI -->
+38    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+38-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:29:5-78
+38-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:29:22-75
+39
+40    <!-- Required on Android 11+ (API 30+) to discover SpeechRecognizer and TTS packages -->
+41    <queries>
+41-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:32:5-39:15
+42        <intent>
+42-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:33:9-35:18
+43            <action android:name="android.speech.RecognitionService" />
+43-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:34:13-72
+43-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:34:21-69
+44        </intent>
+45        <intent>
+45-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:36:9-38:18
+46            <action android:name="android.intent.action.TTS_SERVICE" />
+46-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:37:13-72
+46-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:37:21-69
+47        </intent>
+48    </queries>
+49
+50    <permission
+50-->[androidx.core:core:1.13.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\368acdecd4178642460f01c708cd6c3b\transformed\core-1.13.1\AndroidManifest.xml:22:5-24:47
+51        android:name="com.orion.assistant.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+51-->[androidx.core:core:1.13.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\368acdecd4178642460f01c708cd6c3b\transformed\core-1.13.1\AndroidManifest.xml:23:9-81
+52        android:protectionLevel="signature" />
+52-->[androidx.core:core:1.13.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\368acdecd4178642460f01c708cd6c3b\transformed\core-1.13.1\AndroidManifest.xml:24:9-44
+53
+54    <uses-permission android:name="com.orion.assistant.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+54-->[androidx.core:core:1.13.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\368acdecd4178642460f01c708cd6c3b\transformed\core-1.13.1\AndroidManifest.xml:26:5-97
+54-->[androidx.core:core:1.13.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\368acdecd4178642460f01c708cd6c3b\transformed\core-1.13.1\AndroidManifest.xml:26:22-94
+55
+56    <application
+56-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:41:5-107:19
+57        android:name="com.orion.assistant.OrionApplication"
+57-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:42:9-41
+58        android:allowBackup="true"
+58-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:43:9-35
+59        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+59-->[androidx.core:core:1.13.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\368acdecd4178642460f01c708cd6c3b\transformed\core-1.13.1\AndroidManifest.xml:28:18-86
+60        android:dataExtractionRules="@xml/data_extraction_rules"
+60-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:44:9-65
+61        android:debuggable="true"
+62        android:extractNativeLibs="false"
+63        android:fullBackupContent="@xml/backup_rules"
+63-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:45:9-54
+64        android:icon="@mipmap/ic_launcher"
+64-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:46:9-43
+65        android:label="@string/app_name"
+65-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:47:9-41
+66        android:roundIcon="@mipmap/ic_launcher_round"
+66-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:48:9-54
+67        android:supportsRtl="true"
+67-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:49:9-35
+68        android:testOnly="true"
+69        android:theme="@style/Theme.Orion" >
+69-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:50:9-43
+70
+71        <!-- Main Chat and Assistant Dashboard Activity -->
+72        <activity
+72-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:53:9-62:20
+73            android:name="com.orion.assistant.MainActivity"
+73-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:54:13-41
+74            android:exported="true"
+74-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:55:13-36
+75            android:theme="@style/Theme.Orion"
+75-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:57:13-47
+76            android:windowSoftInputMode="adjustResize" >
+76-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:56:13-55
+77            <intent-filter>
+77-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:58:13-61:29
+78                <action android:name="android.intent.action.MAIN" />
+78-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:59:17-69
+78-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:59:25-66
+79
+80                <category android:name="android.intent.category.LAUNCHER" />
+80-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:60:17-77
+80-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:60:27-74
+81            </intent-filter>
+82        </activity>
+83
+84        <!-- Full-Screen Incoming Call Activity -->
+85        <activity
+85-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:65:9-71:55
+86            android:name="com.orion.assistant.ui.call.IncomingCallActivity"
+86-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:66:13-57
+87            android:exported="false"
+87-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:67:13-37
+88            android:launchMode="singleTop"
+88-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:70:13-43
+89            android:showWhenLocked="true"
+89-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:68:13-42
+90            android:theme="@style/Theme.Orion.Call"
+90-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:71:13-52
+91            android:turnScreenOn="true" />
+91-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:69:13-40
+92
+93        <!-- Orion Accessibility Service: Autonomous System Navigation & Control -->
+94        <service
+94-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:74:9-84:19
+95            android:name="com.orion.assistant.service.accessibility.OrionAccessibilityService"
+95-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:75:13-76
+96            android:exported="true"
+96-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:77:13-36
+97            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" >
+97-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:76:13-79
+98            <intent-filter>
+98-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:78:13-80:29
+99                <action android:name="android.accessibilityservice.AccessibilityService" />
+99-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:79:17-92
+99-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:79:25-89
+100            </intent-filter>
+101
+102            <meta-data
+102-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:81:13-83:72
+103                android:name="android.accessibilityservice"
+103-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:82:17-60
+104                android:resource="@xml/accessibility_service_config" />
+104-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:83:17-69
+105        </service>
+106
+107        <!-- Telecom ConnectionService for native Android call integration -->
+108        <service
+108-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:87:9-94:19
+109            android:name="com.orion.assistant.service.telecom.OrionConnectionService"
+109-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:88:13-67
+110            android:exported="true"
+110-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:90:13-36
+111            android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE" >
+111-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:89:13-84
+112            <intent-filter>
+112-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:91:13-93:29
+113                <action android:name="android.telecom.ConnectionService" />
+113-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:92:17-76
+113-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:92:25-73
+114            </intent-filter>
+115        </service>
+116
+117        <!-- Floating Bubble Overlay Service -->
+118        <service
+118-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:97:9-105:19
+119            android:name="com.orion.assistant.service.overlay.OrionFloatingService"
+119-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:98:13-65
+120            android:enabled="true"
+120-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:99:13-35
+121            android:exported="false"
+121-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:100:13-37
+122            android:foregroundServiceType="specialUse" >
+122-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:101:13-55
+123            <property
+123-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:102:13-104:94
+124                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+124-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:103:17-76
+125                android:value="Persistent floating assistant bubble and on-screen control" />
+125-->C:\Users\Kurian Tony Aloor\OneDrive\Desktop\orion\app\src\main\AndroidManifest.xml:104:17-91
+126        </service>
+127        <service
+127-->[androidx.camera:camera-camera2:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8f74178ae03404305b77664f042bd1a5\transformed\camera-camera2-1.4.0\AndroidManifest.xml:24:9-33:19
+128            android:name="androidx.camera.core.impl.MetadataHolderService"
+128-->[androidx.camera:camera-camera2:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8f74178ae03404305b77664f042bd1a5\transformed\camera-camera2-1.4.0\AndroidManifest.xml:25:13-75
+129            android:enabled="false"
+129-->[androidx.camera:camera-camera2:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8f74178ae03404305b77664f042bd1a5\transformed\camera-camera2-1.4.0\AndroidManifest.xml:26:13-36
+130            android:exported="false" >
+130-->[androidx.camera:camera-camera2:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8f74178ae03404305b77664f042bd1a5\transformed\camera-camera2-1.4.0\AndroidManifest.xml:27:13-37
+131            <meta-data
+131-->[androidx.camera:camera-camera2:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8f74178ae03404305b77664f042bd1a5\transformed\camera-camera2-1.4.0\AndroidManifest.xml:30:13-32:89
+132                android:name="androidx.camera.core.impl.MetadataHolderService.DEFAULT_CONFIG_PROVIDER"
+132-->[androidx.camera:camera-camera2:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8f74178ae03404305b77664f042bd1a5\transformed\camera-camera2-1.4.0\AndroidManifest.xml:31:17-103
+133                android:value="androidx.camera.camera2.Camera2Config$DefaultProvider" />
+133-->[androidx.camera:camera-camera2:1.4.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8f74178ae03404305b77664f042bd1a5\transformed\camera-camera2-1.4.0\AndroidManifest.xml:32:17-86
+134        </service>
+135
+136        <provider
+136-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8488254444a7ba43d8134c7adfb6992f\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+137            android:name="androidx.startup.InitializationProvider"
+137-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8488254444a7ba43d8134c7adfb6992f\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
+138            android:authorities="com.orion.assistant.androidx-startup"
+138-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8488254444a7ba43d8134c7adfb6992f\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
+139            android:exported="false" >
+139-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8488254444a7ba43d8134c7adfb6992f\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
+140            <meta-data
+140-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8488254444a7ba43d8134c7adfb6992f\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+141                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+141-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8488254444a7ba43d8134c7adfb6992f\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+142                android:value="androidx.startup" />
+142-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\8488254444a7ba43d8134c7adfb6992f\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+143            <meta-data
+143-->[androidx.lifecycle:lifecycle-process:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\4f994891982c9eb29a323917cf46f87e\transformed\lifecycle-process-2.8.6\AndroidManifest.xml:29:13-31:52
+144                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+144-->[androidx.lifecycle:lifecycle-process:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\4f994891982c9eb29a323917cf46f87e\transformed\lifecycle-process-2.8.6\AndroidManifest.xml:30:17-78
+145                android:value="androidx.startup" />
+145-->[androidx.lifecycle:lifecycle-process:2.8.6] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\4f994891982c9eb29a323917cf46f87e\transformed\lifecycle-process-2.8.6\AndroidManifest.xml:31:17-49
+146            <meta-data
+146-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
+147                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+147-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
+148                android:value="androidx.startup" />
+148-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
+149        </provider>
+150
+151        <activity
+151-->[androidx.compose.ui:ui-tooling-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\ba776c8c6bff9df62efd0d034a1ee2cb\transformed\ui-tooling-release\AndroidManifest.xml:23:9-25:39
+152            android:name="androidx.compose.ui.tooling.PreviewActivity"
+152-->[androidx.compose.ui:ui-tooling-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\ba776c8c6bff9df62efd0d034a1ee2cb\transformed\ui-tooling-release\AndroidManifest.xml:24:13-71
+153            android:exported="true" />
+153-->[androidx.compose.ui:ui-tooling-android:1.7.4] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\ba776c8c6bff9df62efd0d034a1ee2cb\transformed\ui-tooling-release\AndroidManifest.xml:25:13-36
+154
+155        <receiver
+155-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
+156            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+156-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
+157            android:directBootAware="false"
+157-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
+158            android:enabled="true"
+158-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
+159            android:exported="true"
+159-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
+160            android:permission="android.permission.DUMP" >
+160-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
+161            <intent-filter>
+161-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
+162                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+162-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
+162-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
+163            </intent-filter>
+164            <intent-filter>
+164-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
+165                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+165-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
+165-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
+166            </intent-filter>
+167            <intent-filter>
+167-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
+168                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+168-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
+168-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
+169            </intent-filter>
+170            <intent-filter>
+170-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
+171                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+171-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
+171-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Kurian Tony Aloor\.gradle\caches\transforms-4\2e984400efa8d7a7bc6d2a4f99aa3218\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
+172            </intent-filter>
+173        </receiver>
+174    </application>
+175
+176</manifest>
