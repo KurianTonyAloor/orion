@@ -58,29 +58,24 @@ class OrionAgent(
         }
 
         // =========================================================================
-        // CROSS-APP ORCHESTRATION: Autonomous multi-app workflows
-        // (e.g. "Sreehari texted me about onam poster make it and send it back as pdf")
+        // GENERALIZED COGNITIVE REASONING & INTENT ENGINE:
+        // Evaluates if query is a knowledge answer or a device task.
+        // If task, passes formatted plan to the secondary Screen Navigator pipeline.
         // =========================================================================
-        val orchestrator = CrossAppOrchestrator(context)
-        val complexGoal = orchestrator.parseComplexGoal(trimmed)
-        if (complexGoal != null) {
-            return orchestrator.executeCrossAppWorkflow(complexGoal) { status ->
+        onProgress?.invoke("Primary engine evaluating intent...")
+        val taskEngine = GeneralizedTaskEngine(context)
+        val plan = taskEngine.evaluateAndPlan(trimmed)
+
+        if (plan.isTask && plan.steps.isNotEmpty()) {
+            return taskEngine.executeTaskPlan(plan) { status ->
                 onProgress?.invoke(status)
                 com.orion.assistant.service.overlay.OrionFloatingService.updateStatus(status)
             }
         }
 
-        // Multi-step goal detection (e.g. "Open YouTube and search for Lo-Fi")
-        if (lower.contains(" and ") || (lower.startsWith("search ") && lower.contains(" on "))) {
-            val planner = TaskPlanner(context)
-            val steps = planner.planGoal(trimmed)
-            if (steps.size > 1) {
-                return planner.executePlan(steps) { current, total, desc ->
-                    val status = "Step $current/$total: $desc"
-                    onProgress?.invoke(status)
-                    com.orion.assistant.service.overlay.OrionFloatingService.updateStatus(status)
-                }
-            }
+        // If it's a general query, knowledge request, or conversational response:
+        if (!plan.answer.isNullOrBlank()) {
+            return ActionResult(true, "Orion", plan.answer)
         }
 
         // =========================================================================
