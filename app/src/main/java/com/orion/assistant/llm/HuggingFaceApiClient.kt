@@ -83,7 +83,7 @@ object HuggingFaceApiClient {
     /**
      * Inspects a specific model repository and lists all available .gguf variants with sizes.
      */
-    suspend fun fetchModelVariants(repoId: String): List<GgufVariant> = withContext(Dispatchers.IO) {
+    suspend fun fetchGgufVariants(repoId: String): List<GgufVariant> = withContext(Dispatchers.IO) {
         val variants = mutableListOf<GgufVariant>()
         var connection: HttpURLConnection? = null
 
