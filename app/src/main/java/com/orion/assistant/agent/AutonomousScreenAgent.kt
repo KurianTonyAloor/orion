@@ -1,8 +1,11 @@
 package com.orion.assistant.agent
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Rect
+import android.os.Bundle
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import com.orion.assistant.llm.LlamaCppRuntime
@@ -20,7 +23,8 @@ import kotlinx.coroutines.delay
 /**
  * AutonomousScreenAgent: Dynamic closed-loop perceptual UI navigation agent.
  * 1. Homes the device to Page 1 and opens the app drawer.
- * 2. Uses the on-device LLM to perceive the active screen, choose the exact click/swipe,
+ * 2. Uses robust multi-strategy text entry (ACTION_SET_TEXT, Paste, Physical Focus Tap).
+ * 3. Uses on-device LLM to perceive the active screen, choose the exact click/swipe,
  *    and achieve navigation goals autonomously.
  */
 class AutonomousScreenAgent(
@@ -55,10 +59,10 @@ class AutonomousScreenAgent(
         val height = dm.heightPixels.toFloat()
 
         Log.d(TAG, "Swiping up from ($width/2, $height*0.85) to ($width/2, $height*0.25) for App Drawer")
-        val swiped = performSwipeGesture(width / 2f, height * 0.85f, width / 2f, height * 0.25f, 300)
+        performSwipeGesture(width / 2f, height * 0.85f, width / 2f, height * 0.25f, 300)
         delay(1000L)
 
-        // 3. Look for the app search bar or app drawer elements
+        // 3. Search and click matching app
         val searched = typeIntoInputField(
             appName,
             listOf("Search apps", "Search", "Search your phone", "App search")
@@ -66,18 +70,115 @@ class AutonomousScreenAgent(
 
         delay(800L)
 
-        // 4. Click the matching app in the search results
         val clicked = clickSemanticTarget(listOf(appName), waitTimeoutMs = 2500L)
         if (clicked) {
             delay(1500L)
             return true
         }
 
-        // Fallback: If not found in search results immediately, try direct package/label launch
         Log.d(TAG, "Drawer item not clicked directly, using Intent launcher fallback")
         val directRes = executor.execute(ActionCommand.OpenApp(appName))
         delay(1500L)
         return directRes.success
+    }
+
+    /**
+     * Robust multi-strategy text input designed for complex apps like Gemini and WhatsApp.
+     * Strategy 1: Find editable node, physically tap it to summon cursor and keyboard.
+     * Strategy 2: Call ACTION_SET_TEXT directly on node and root focus.
+     * Strategy 3: Copy text to system clipboard and trigger ACTION_PASTE.
+     * Strategy 4: Fallback to coordinate tap near bottom of screen and type.
+     */
+    suspend fun typeIntoInputField(
+        text: String,
+        clickTargetCandidates: List<String> = listOf("Ask Gemini", "Type a message", "Message", "Ask", "Search", "Prompt")
+    ): Boolean {
+        Log.d(TAG, "Attempting to type text: '$text'")
+        val root = service?.rootInActiveWindow
+
+        // Step 1: Scan for editable element
+        var targetElement: SemanticElement? = null
+        if (root != null) {
+            val (_, elements) = ScreenSemanticParser.parseActiveScreen(root)
+            targetElement = elements.find { it.isEditable }
+                ?: elements.find { el ->
+                    clickTargetCandidates.any { candidate -> el.text.contains(candidate, ignoreCase = true) }
+                }
+        }
+
+        // Tap the input box to focus it
+        if (targetElement != null) {
+            Log.d(TAG, "Tapping input element at (${targetElement.centerX}, ${targetElement.centerY})")
+            executor.execute(ActionCommand.TapCoordinate(targetElement.centerX, targetElement.centerY))
+            delay(400L)
+        } else {
+            // Coordinate tap fallback: In Gemini, input bar is at ~88% of screen height
+            val dm = Resources.getSystem().displayMetrics
+            executor.execute(ActionCommand.TapCoordinate(dm.widthPixels * 0.45f, dm.heightPixels * 0.88f))
+            delay(400L)
+        }
+
+        // Step 2: Try ACTION_SET_TEXT on target node or focused node
+        val freshRoot = service?.rootInActiveWindow
+        val focusedNode = freshRoot?.findFocus(AccessibilityNodeInfo.FOCUS_INPUT)
+            ?: targetElement?.nodeRef
+
+        if (focusedNode != null) {
+            val args = Bundle().apply {
+                putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, text)
+            }
+            val setTextSuccess = focusedNode.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, args)
+            if (setTextSuccess) {
+                Log.d(TAG, "Successfully entered text via ACTION_SET_TEXT")
+                return true
+            }
+        }
+
+        // Step 3: Clipboard + ACTION_PASTE Fallback
+        try {
+            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+            if (clipboard != null) {
+                val clip = ClipData.newPlainText("OrionInput", text)
+                clipboard.setPrimaryClip(clip)
+
+                val pasteTarget = freshRoot?.findFocus(AccessibilityNodeInfo.FOCUS_INPUT) ?: focusedNode
+                if (pasteTarget != null) {
+                    val pasted = pasteTarget.performAction(AccessibilityNodeInfo.ACTION_PASTE)
+                    if (pasted) {
+                        Log.d(TAG, "Successfully entered text via ACTION_PASTE")
+                        return true
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Clipboard paste error: ${e.message}")
+        }
+
+        // Step 4: Generic executor fallback
+        val typeResult = executor.execute(ActionCommand.TypeText(text))
+        return typeResult.success
+    }
+
+    /**
+     * Submits or sends the typed message in Gemini / WhatsApp / Chat apps.
+     * Looks for "Send", "Submit", "arrow", or taps the send button position (bottom right).
+     */
+    suspend fun submitInput(): Boolean {
+        delay(500L)
+        val clicked = clickSemanticTarget(
+            listOf("Send", "Submit", "arrow", "arrow_forward", "Send message", "Generate"),
+            waitTimeoutMs = 1500L
+        )
+
+        if (clicked) return true
+
+        // Physical tap fallback: Bottom right of screen where the send arrow is located in Gemini & WhatsApp
+        val dm = Resources.getSystem().displayMetrics
+        val sendX = dm.widthPixels * 0.92f
+        val sendY = dm.heightPixels * 0.88f
+        Log.d(TAG, "Tapping send coordinate fallback at ($sendX, $sendY)")
+        val res = executor.execute(ActionCommand.TapCoordinate(sendX, sendY))
+        return res.success
     }
 
     /**
@@ -88,7 +189,6 @@ class AutonomousScreenAgent(
         subGoal: String,
         onProgress: ((String) -> Unit)? = null
     ): ActionResult {
-        // 1. Gather screen elements
         val screenDesc = executor.refreshScreenContext()
         val systemPrompt = """
             You are Orion navigating an Android screen.
@@ -97,8 +197,7 @@ class AutonomousScreenAgent(
 
             Goal: $subGoal
 
-            Choose the exact next action to get closer to the goal.
-            Respond ONLY with a JSON action:
+            Choose the exact next action. Respond ONLY with a JSON action:
             {"action": "click", "text": "<label>", "index": <optional_index>}
             {"action": "type", "text": "<string>"}
             {"action": "scroll", "direction": "up"|"down"|"left"|"right"}
@@ -107,9 +206,8 @@ class AutonomousScreenAgent(
 
         onProgress?.invoke("Analyzing screen layout for '$subGoal'...")
         val decision = llamaRuntime.decideNextAction(systemPrompt, subGoal)
-        Log.d(TAG, "LLM dynamic navigation decision: action=${decision.actionName}, thought=${decision.thought}")
+        Log.d(TAG, "LLM decision: action=${decision.actionName}, thought=${decision.thought}")
 
-        // 2. Execute decision
         val json = decision.rawJson
         return when (decision.actionName.lowercase()) {
             "click" -> {
@@ -139,9 +237,6 @@ class AutonomousScreenAgent(
         }
     }
 
-    /**
-     * Continuously senses the screen until a target element with the specified text is visible.
-     */
     suspend fun waitForElement(
         matchingText: String,
         timeoutMs: Long = 6000L,
@@ -164,9 +259,6 @@ class AutonomousScreenAgent(
         return null
     }
 
-    /**
-     * Clicks an element by semantic intent, waiting for it and using direct coordinates if accessibility click is unhandled.
-     */
     suspend fun clickSemanticTarget(
         candidateLabels: List<String>,
         waitTimeoutMs: Long = 4000L
@@ -181,7 +273,7 @@ class AutonomousScreenAgent(
                         el.text.contains(label, ignoreCase = true)
                     }
                     if (match != null) {
-                        Log.d(TAG, "Found target element '${match.text}' (clickable=${match.isClickable}) at index ${match.index} (${match.centerX}, ${match.centerY})")
+                        Log.d(TAG, "Found target element '${match.text}' at index ${match.index} (${match.centerX}, ${match.centerY})")
                         val res = executor.execute(ActionCommand.Click(targetIndex = match.index))
                         if (res.success) return true
 
@@ -200,38 +292,6 @@ class AutonomousScreenAgent(
         return false
     }
 
-    /**
-     * Types into an input field. First taps the candidate area or first editable field, then enters text.
-     */
-    suspend fun typeIntoInputField(
-        text: String,
-        clickTargetCandidates: List<String> = listOf("Type", "Ask", "Search", "Message", "Prompt")
-    ): Boolean {
-        val root = service?.rootInActiveWindow
-        var targetNode: AccessibilityNodeInfo? = null
-
-        if (root != null) {
-            val (_, elements) = ScreenSemanticParser.parseActiveScreen(root)
-            val editable = elements.find { it.isEditable }
-            if (editable != null) {
-                executor.execute(ActionCommand.TapCoordinate(editable.centerX, editable.centerY))
-                delay(300L)
-                targetNode = editable.nodeRef
-            }
-        }
-
-        if (targetNode == null) {
-            clickSemanticTarget(clickTargetCandidates, waitTimeoutMs = 1200L)
-            delay(400L)
-        }
-
-        val typeResult = executor.execute(ActionCommand.TypeText(text))
-        return typeResult.success
-    }
-
-    /**
-     * Performs a physical scroll/swipe on the active screen.
-     */
     suspend fun scroll(direction: ScrollDirection): Boolean {
         val res = executor.execute(ActionCommand.Scroll(direction))
         delay(600L)

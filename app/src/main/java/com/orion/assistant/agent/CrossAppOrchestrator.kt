@@ -137,24 +137,21 @@ class CrossAppOrchestrator(private val context: Context) {
 
         onProgress("Phase 2/4: Returning to Home Screen to launch $selectedAiName via App Drawer...")
         screenAgent.openAppViaDrawer(selectedAiName)
-        delay(2500L)
+        delay(3000L)
 
         val generationPrompt = "Generate a full-screen vibrant ${goal.assetTopic} with traditional festive art, high resolution, no watermarks."
 
-        // Analyze screen dynamically with LLM to find where to type
-        onProgress("Analyzing $selectedAiName screen layout with LLM...")
-        screenAgent.stepIntelligently("Type generation prompt: $generationPrompt", onProgress)
-        delay(600L)
-
-        // Ensure text is typed into the AI input field
+        // Enter prompt into Gemini using multi-strategy focus & typing
+        onProgress("Entering prompt into $selectedAiName...")
         screenAgent.typeIntoInputField(
             generationPrompt,
             listOf("Ask Gemini", "Message", "Ask anything", "Prompt", "Type a message", "Ask")
         )
-        delay(600L)
+        delay(800L)
 
-        // Submit prompt using dynamic LLM perception
-        screenAgent.clickSemanticTarget(listOf("Send", "Submit", "arrow", "Generate"))
+        // Submit prompt (Taps Send button or bottom-right send coordinate)
+        onProgress("Submitting prompt to $selectedAiName...")
+        screenAgent.submitInput()
 
         // Wait for image generation
         var elapsed = 0
