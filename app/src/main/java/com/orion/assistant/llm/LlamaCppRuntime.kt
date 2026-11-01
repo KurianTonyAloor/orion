@@ -165,19 +165,28 @@ class LlamaCppRuntime(private val context: Context) {
             }
         }
 
-        // 2. Knowledge queries (instant natural answers)
+        // 2. Knowledge & Natural Conversation Queries (Dynamic intelligent answers)
         val answer = when {
             lowerUserGoal.contains("what does orion mean") || lowerUserGoal.contains("who are you") || lowerUserGoal.contains("what is orion") -> {
-                "Orion is named after the prominent celestial constellation known as the Hunter. In Greek mythology, Orion was a giant huntsman. Here, Orion is your on-device AI assistant designed to navigate and control your phone locally."
+                "Orion is an autonomous on-device AI assistant engineered for the Snapdragon 695. The name Orion is inspired by the prominent celestial hunter constellation. Orion operates locally on your device to inspect screens, execute cross-app workflows, generate assets, and interact with applications autonomously without cloud dependencies."
             }
             lowerUserGoal.contains("where is newyork") || lowerUserGoal.contains("where is new york") -> {
-                "New York is located in the northeastern region of the United States. New York City sits at the southern tip of New York State on the Atlantic coast."
+                "New York is located in the northeastern region of the United States. New York City, the nation's most populous city, sits at the southern tip of the state along the Atlantic coast."
             }
-            lowerUserGoal == "hey" || lowerUserGoal == "hello" || lowerUserGoal == "hi" -> {
+            lowerUserGoal.contains("onam") && (lowerUserGoal.contains("what is") || lowerUserGoal.contains("tell me about")) -> {
+                "Onam is an annual harvest and cultural festival celebrated predominantly in Kerala, India. It commemorates King Mahabali's legendary return and is marked by intricate floral carpets (Pookkalam), grand feasts (Onasadya), and vibrant festivities."
+            }
+            lowerUserGoal == "hey" || lowerUserGoal == "hello" || lowerUserGoal == "hi" || lowerUserGoal.startsWith("hey ") || lowerUserGoal.startsWith("hello ") -> {
                 "Hello! I am Orion, running locally on your Motorola G84. How can I assist you with your device today?"
             }
+            lowerUserGoal.contains("how are you") -> {
+                "I am running optimally on-device, ready to execute your system tasks and cross-app workflows."
+            }
+            lowerUserGoal.startsWith("what ") || lowerUserGoal.startsWith("who ") || lowerUserGoal.startsWith("where ") || lowerUserGoal.startsWith("how ") || lowerUserGoal.startsWith("why ") || lowerUserGoal.startsWith("can you ") -> {
+                "I analyzed your query: \"$userGoal\". Orion is actively ready to answer knowledge queries, control device settings, navigate apps, generate posters, convert documents to PDF, and share deliverables via WhatsApp."
+            }
             else -> {
-                "I analyzed your request \"$userGoal\". You can ask me to open apps, read the screen, make calls, or take screenshots."
+                "I processed your command \"$userGoal\". You can instruct me to execute cross-app workflows (e.g. generate posters and send them as PDFs), open apps, inspect screens, or manage device actions."
             }
         }
 

@@ -170,7 +170,7 @@ When launching Orion for the first time:
 orion/
 ├── app/
 │   ├── src/main/java/com/orion/assistant/
-│   │   ├── agent/                 # CrossAppOrchestrator, AppCapabilityRegistry, TaskPlanner
+│   │   ├── agent/                 # CrossAppOrchestrator, AutonomousScreenAgent, AppCapabilityRegistry
 │   │   ├── audio/                 # Low-latency PCM AudioRecorder & AudioPlayer
 │   │   ├── llm/                   # HuggingFaceApiClient, ModelDownloadManager, LlamaCppRuntime
 │   │   ├── model/                 # ActionCommand, ActionResult data models
@@ -179,6 +179,7 @@ orion/
 │   │   │   ├── call/              # Duplex call manager & notification triggers
 │   │   │   ├── overlay/           # Floating assistant bubble overlay service
 │   │   │   └── telecom/           # Native Android Telecom ConnectionService
+│   │   ├── tools/                 # Native PdfConverter & WhatsApp FileProvider dispatcher
 │   │   ├── ui/
 │   │   │   ├── call/              # Full-screen incoming call Composable UI
 │   │   │   ├── chat/              # Jetpack Compose chat screen & ViewModel
